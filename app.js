@@ -1,11 +1,18 @@
-// File: app.js
+if (!global.crypto) {
+    global.crypto = require('crypto');
+}
+
 const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const path = require('path');
 
+require('dotenv').config();
+
+const Product = require('./models/Product');
+
 const app = express();
-const PORT = 3000;
+//const PORT = 3000;
 
 // 1. Cấu hình View Engine (EJS)
 app.set('view engine', 'ejs');
@@ -25,18 +32,48 @@ app.use((req, res, next) => {
     next();
 });
 
-// 2. Import Routes (MỚI THÊM)
+// 2. Import Routes 
 const productRoutes = require('./routes/productRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // 3. Kết nối Cơ sở dữ liệu MongoDB
-mongoose.connect('mongodb://localhost:27017/shop_db')
-    .then(() => console.log('✅ Kết nối MongoDB thành công!'))
-    .catch(err => console.error('❌ Lỗi kết nối MongoDB:', err));
+mongoose.connect('mongodb://127.0.0.1:27017/EduStore')
+    .then(async () => {
+        console.log('✅ Kết nối Cơ sở dữ liệu EduStore thành công!');
 
-// 4. Sử dụng Routes (THAY THẾ ĐOẠN ROUTE CŨ)
+        // --- BẮT ĐẦU KỊCH BẢN TEST BƠM DỮ LIỆU ---
+        try {
+            // Kiểm tra xem trong DB đã có sản phẩm nào chưa
+            const count = await Product.countDocuments();
+            if (count === 0) {
+                // Nếu DB trống, tiến hành tạo thử 1 cây bút
+                await Product.create({
+                    sku: "BUT-001",           // Chuỗi mã không được trùng
+                    name: "Bút bi Thiên Long",
+                    category: "Bút",          // Phải gõ đúng chữ 'Bút' do em đã thiết lập Enum
+                    price: 5000,              // Phải lớn hơn 0
+                    stock: 100,               // Phải lớn hơn 0
+                    description: "Bút mực xanh, ngòi 0.5mm êm ái"
+                });
+                console.log('🎉 Đã bơm 1 sản phẩm mẫu thành công! Hãy mở Compass để xem.');
+            }
+        } catch (error) {
+            console.log('Lỗi khi bơm dữ liệu test:', error.message);
+        }
+        // --- KẾT THÚC KỊCH BẢN TEST ---
+
+    })
+    .catch((err) => {
+        console.log('❌ Lỗi kết nối CSDL: ', err);
+    });
+
+// 4. Sử dụng Routes
 app.use('/', productRoutes);
+app.use('/admin', adminRoutes);
+
 
 // 5. Khởi chạy Server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server đang chạy tại: http://localhost:${PORT}`);
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });

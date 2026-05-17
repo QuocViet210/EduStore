@@ -1,0 +1,16 @@
+# Thư viện và dependencies (Tuyệt đối không đẩy lên)
+node_modules/
+
+# File cấu hình môi trường chứa thông tin bảo mật (Mật khẩu DB, Port...)
+.env
+
+# Các file log sinh ra trong quá trình chạy server
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Các file do hệ điều hành tự sinh ra
+.DS_Store
+Thumbs.db

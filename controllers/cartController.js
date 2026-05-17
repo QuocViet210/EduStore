@@ -1,4 +1,4 @@
-const Product = require('../models/Products');
+const Product = require('../models/Product');
 
 async function loadCart(req) {
     const cart = req.session.cart || {};

@@ -1,0 +1,19 @@
+<%- include('../partials/header') %>
+    <div class="container py-5">
+        <h2>Thêm sản phẩm mới</h2>
+        <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label>Tên sản phẩm (Ví dụ: Bút máy Thiên Long)</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Giá tiền</label>
+                <input type="number" name="price" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Chọn ảnh sản phẩm (Sẽ tự đổi tên theo chuẩn của em)</label>
+                <input type="file" name="image" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+        </form>
+    </div>
