@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4">✍️ Đăng Ký</h2>
+
+                        <% if (typeof error !=='undefined' && error) { %>
+                            <div class="alert alert-danger">
+                                <%= error %>
+                            </div>
+                            <% } %>
+
+                                <form id="registerForm">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Tên Đăng Nhập</label>
+                                        <input type="text" class="form-control" id="username" name="username" required>
+                                        <small class="text-muted">3-50 ký tự, chỉ chứa chữ, số, dấu gạch dưới</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Mật Khẩu</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                            required>
+                                        <small class="text-muted">Ít nhất 6 ký tự</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Xác Nhận Mật Khẩu</label>
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                            name="confirmPassword" required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100 mb-3">Đăng Ký</button>
+                                </form>
+
+                                <div class="text-center">
+                                    <p>Đã có tài khoản? <a href="/users/login">Đăng nhập</a></p>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value
+            };
+
+            try {
+                const response = await fetch('/api/users/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Đăng ký thành công! Vui lòng đăng nhập.');
+                    window.location.href = '/users/login';
+                } else {
+                    const errorMsg = data.errors?.map(e => e.message).join('\n') || data.message;
+                    alert('❌ ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Lỗi Server!');
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

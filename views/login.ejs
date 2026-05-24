@@ -1,0 +1,70 @@
+<%- include('partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4">🔐 Đăng Nhập</h2>
+
+                        <% if (typeof error !=='undefined' && error) { %>
+                            <div class="alert alert-danger">
+                                <%= error %>
+                            </div>
+                            <% } %>
+
+                                <form id="loginForm">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Mật Khẩu</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                            required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100 mb-3">Đăng Nhập</button>
+                                </form>
+
+                                <div class="text-center">
+                                    <p>Chưa có tài khoản? <a href="/users/register">Đăng ký ngay</a></p>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/users/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Đăng nhập thành công!');
+                    window.location.href = '/';
+                } else {
+                    const errorMsg = data.errors?.map(e => e.message).join('\n') || data.message;
+                    alert('❌ ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Lỗi Server!');
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

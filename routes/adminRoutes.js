@@ -1,25 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const adminController = require('../controllers/adminController');
+const { adminAuth } = require('../middleware/auth');
+const upload = require('../config/multer');
 
-// Cấu hình nơi lưu ảnh (Bài 8)
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'public/img'),
-    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
-const upload = multer({ storage: storage });
+// ✅ MIDDLEWARE: Kiểm tra admin
+router.use(adminAuth);
 
-// Route hiển thị trang chủ Admin (Dashboard)
+// ✅ DASHBOARD
 router.get('/', adminController.getDashboard);
 
-// Route hiển thị form Thêm sản phẩm
-router.get('/add-product', (req, res) => {
-    console.log("👉 Đã vào được Route: /admin/add-product");
-    res.render('admin/add-product');
-});
+// ✅ PRODUCTS MANAGEMENT
+router.get('/products', adminController.getProductsList);
+router.get('/products/add', adminController.getAddProductPage);
+router.post('/products/add', upload.single('image'), adminController.postAddProduct);
+router.get('/products/edit/:id', adminController.getEditProductPage);
+router.post('/products/edit/:id', upload.single('image'), adminController.postUpdateProduct);
+router.post('/products/delete/:id', adminController.postDeleteProduct);
 
-// Route xử lý lưu dữ liệu (Dùng middleware upload.single('image'))
-router.post('/add-product', upload.single('image'), adminController.postAddProduct);
+// ✅ ORDERS MANAGEMENT
+router.get('/orders', adminController.getOrdersList);
+router.get('/orders/:id', adminController.getOrderDetail);
+router.post('/orders/:id/update-status', adminController.postUpdateOrderStatus);
+
+// ✅ USERS MANAGEMENT
+router.get('/users', adminController.getUsersList);
 
 module.exports = router;

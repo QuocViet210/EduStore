@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">✏️ Chỉnh Sửa Sản Phẩm</h2>
+
+        <div class="card">
+            <div class="card-body">
+                <form action="/admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data"
+                    id="editProductForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Tên Sản Phẩm</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    value="<%= product.name %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Giá (VNĐ)</label>
+                                <input type="number" class="form-control" id="price" name="price"
+                                    value="<%= product.price %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="stock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="stock" name="stock"
+                                    value="<%= product.stock %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Danh Mục</label>
+                                <input type="text" class="form-control" id="category" name="category"
+                                    value="<%= product.category %>" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Mô Tả</label>
+                                <textarea class="form-control" id="description" name="description"
+                                    rows="5"><%= product.description || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Ảnh Sản Phẩm</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <% if (product.imageUrl && product.imageUrl !=='/img/default-product.png' ) { %>
+                                    <img src="<%= product.imageUrl %>" alt="Product"
+                                        style="width: 200px; margin-top: 10px;">
+                                    <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">💾 Lưu Thay Đổi</button>
+                        <a href="/admin/products" class="btn btn-secondary">❌ Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
