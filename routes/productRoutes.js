@@ -7,37 +7,49 @@ const { adminAuth, auth } = require('../middleware/auth');
 const upload = require('../config/multer');
 const userController = require('../controllers/userController');
 
-// ✅ AUTH ROUTES - Render pages
+//  AUTH ROUTES - Render pages
 router.get('/login', userController.getLoginPage);
 router.get('/register', userController.getRegisterPage);
 router.get('/profile', auth, userController.getProfilePage);
 router.get('/change-password', auth, userController.getChangePasswordPage);
 
-// ✅ ROUTES RENDER (EJS) - Công khai
+//  ROUTES RENDER (EJS) - Công khai
 router.get('/', productController.getAllProducts);
 router.get('/shop', productController.getShop);
 router.get('/product', (req, res) => res.redirect('/shop'));
 router.get('/product/:id', productController.getProductDetail);
-router.get('/single', (req, res) => {
-    res.redirect('/shop');
-});
+router.get('/single', (req, res) => res.redirect('/shop'));
+
+// ROUTES GIỎ HÀNG
 router.get('/cart', cartController.getCart);
 router.get('/cart/add/:id', cartController.addToCart);
 router.get('/cart/remove/:id', cartController.removeFromCart);
 router.get('/cart/update/:id', cartController.updateCart);
-router.get('/checkout', (req, res) => res.render('checkout'));
+// Route xử lý AJAX cập nhật giỏ hàng ngầm
+router.post('/api/cart/update', cartController.updateCartAPI);
+
+//  ROUTES THANH TOÁN - YÊU CẦU ĐĂNG NHẬP (auth)
+// 1. Hiển thị form thanh toán
+router.get('/checkout', auth, cartController.getCheckoutPage);
+// 2. Xử lý lưu đơn hàng vào Database
+router.post('/checkout', auth, cartController.processCheckout);
+
+// Route trang thanh toán thành công
+router.get('/order-success/:id', auth, cartController.getOrderSuccessPage);
+
 router.get('/contact', (req, res) => res.render('contact'));
 
-// ✅ API ROUTES - Công khai (Read)
+
+//  API ROUTES - Công khai (Read)
 // Lấy danh sách sản phẩm (có pagination, filter, search)
 router.get('/api/products', productController.getProductsAPI);
 
 // Lấy chi tiết sản phẩm
 router.get('/api/products/:id', productController.getProductDetailAPI);
 
-// ✅ ADMIN API ROUTES - Cần xác thực (CRUD)
+//  ADMIN API ROUTES - Cần xác thực (CRUD)
 /**
- * ✅ CREATE: Tạo sản phẩm mới với upload ảnh
+ *  CREATE: Tạo sản phẩm mới với upload ảnh
  * POST /api/products
  * 
  * Body (multipart/form-data):
@@ -57,7 +69,7 @@ router.post('/api/products',
 );
 
 /**
- * ✅ UPDATE: Cập nhật sản phẩm (có thể đổi ảnh)
+ *  UPDATE: Cập nhật sản phẩm (có thể đổi ảnh)
  * PUT /api/products/:id
  * 
  * Body (multipart/form-data):
@@ -75,7 +87,7 @@ router.put('/api/products/:id',
 );
 
 /**
- * ✅ DELETE: Xóa sản phẩm (Soft delete - chỉ ẩn)
+ *  DELETE: Xóa sản phẩm (Soft delete - chỉ ẩn)
  * DELETE /api/products/:id
  */
 router.delete('/api/products/:id',
@@ -84,7 +96,7 @@ router.delete('/api/products/:id',
 );
 
 /**
- * 🔄 BONUS: Khôi phục sản phẩm đã xóa
+ *  BONUS: Khôi phục sản phẩm đã xóa
  * PATCH /api/products/:id/restore
  */
 router.patch('/api/products/:id/restore',
@@ -93,7 +105,7 @@ router.patch('/api/products/:id/restore',
 );
 
 /**
- * 🗑️ HARD DELETE: Xóa vĩnh viễn sản phẩm (không thể khôi phục!)
+ *  HARD DELETE: Xóa vĩnh viễn sản phẩm (không thể khôi phục!)
  * DELETE /api/products/:id/permanent
  */
 router.delete('/api/products/:id/permanent',

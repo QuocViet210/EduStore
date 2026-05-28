@@ -21,8 +21,18 @@ const deleteOldImage = (imagePath) => {
  */
 exports.getAllProducts = async (req, res) => {
     try {
+        // 1. Lấy danh sách sản phẩm
         const products = await Product.find({ isActive: true }).sort({ createdAt: -1 });
-        res.render('index', { products });
+
+        // 2. Lấy số lượng giỏ hàng từ Session
+        const cart = req.session.cart || {};
+        const cartItemCount = Object.values(cart).reduce((count, quantity) => count + quantity, 0);
+
+        // 3. Truyền cả 2 biến ra giao diện EJS
+        res.render('index', {
+            products,
+            cartItemCount
+        });
     } catch (error) {
         console.error('❌ Error in getAllProducts:', error);
         res.status(500).send('Lỗi Server!');

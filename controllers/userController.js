@@ -360,27 +360,35 @@ exports.login = async (req, res) => {
  * 🔒 AUTHENTICATION: Đăng xuất
  * POST /api/auth/logout
  */
-exports.logout = async (req, res) => {
+/**
+ * Đăng xuất tài khoản
+ */
+exports.logout = (req, res) => {
     try {
+        // Hủy session của người dùng hiện tại
         req.session.destroy((err) => {
             if (err) {
-                return sendError(res, 'Lỗi khi đăng xuất', 500);
+                console.error(' Lỗi khi đăng xuất:', err);
+                return res.status(500).send('Lỗi khi đăng xuất');
             }
-            console.log(`✅ Đăng xuất thành công`);
-            sendSuccess(res, null, 'Đăng xuất thành công');
-        });
 
+            // Tùy chọn: Xóa luôn cookie lưu session trên trình duyệt cho sạch sẽ
+            res.clearCookie('connect.sid');
+
+            // Lệnh quan trọng nhất: Chuyển hướng người dùng về Trang chủ (hoặc '/login')
+            res.redirect('/');
+        });
     } catch (error) {
-        console.error('❌ Error in logout:', error);
-        sendError(res, 'Lỗi khi đăng xuất', 500);
+        console.error(' Lỗi hệ thống:', error);
+        res.redirect('/');
     }
 };
 
 /**
- * ✅ RENDER: Trang đăng nhập
+ *  RENDER: Trang đăng nhập
  */
 exports.getLoginPage = (req, res) => {
-    console.log('🔐 getLoginPage called');
+    console.log(' getLoginPage called');
     if (req.session.user) {
         return res.redirect('/');
     }
@@ -388,7 +396,7 @@ exports.getLoginPage = (req, res) => {
 };
 
 /**
- * ✅ RENDER: Trang đăng ký
+ *  RENDER: Trang đăng ký
  */
 exports.getRegisterPage = (req, res) => {
     if (req.session.user) {
@@ -398,7 +406,7 @@ exports.getRegisterPage = (req, res) => {
 };
 
 /**
- * ✅ RENDER: Trang hồ sơ cá nhân
+ *  RENDER: Trang hồ sơ cá nhân
  */
 exports.getProfilePage = async (req, res) => {
     try {
@@ -409,13 +417,13 @@ exports.getProfilePage = async (req, res) => {
         const user = await User.findById(req.session.user._id).select('-password');
         res.render('profile', { user });
     } catch (error) {
-        console.error('❌ Error in getProfilePage:', error);
+        console.error(' Error in getProfilePage:', error);
         res.status(500).send('Lỗi Server!');
     }
 };
 
 /**
- * ✅ RENDER: Trang đổi mật khẩu
+ *  RENDER: Trang đổi mật khẩu
  */
 exports.getChangePasswordPage = (req, res) => {
     if (!req.session.user) {

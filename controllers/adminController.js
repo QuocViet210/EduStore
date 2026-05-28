@@ -66,7 +66,7 @@ exports.getDashboard = async (req, res) => {
  */
 exports.getProductsList = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = '' } = req.query;
+        const { page = 1, limit = 10, search = '', success = '', error = '' } = req.query;
         const skip = (page - 1) * limit;
 
         let filter = { isActive: true };
@@ -90,6 +90,8 @@ exports.getProductsList = async (req, res) => {
             currentPage: parseInt(page),
             totalPages,
             search,
+            success: success || '',
+            error: error || '',
             user: req.session.user
         });
     } catch (error) {
@@ -102,7 +104,10 @@ exports.getProductsList = async (req, res) => {
  * ✅ RENDER: Trang thêm sản phẩm
  */
 exports.getAddProductPage = (req, res) => {
-    res.render('admin/add-product', { user: req.session.user });
+    res.render('admin/add-product', {
+        user: req.session.user,
+        error: ''
+    });
 };
 
 /**
@@ -112,28 +117,65 @@ exports.postAddProduct = async (req, res) => {
     try {
         const { sku, name, price, stock, category, description } = req.body;
 
-        // Kiểm tra SKU trùng
-        const existingSku = await Product.findOne({ sku: sku.toUpperCase() });
-        if (existingSku) {
-            return res.status(400).send('SKU đã tồn tại!');
+        // ✅ Validation
+        if (!sku || !name || !price) {
+            return res.status(400).render('admin/add-product', {
+                error: '⚠️ Vui lòng điền các trường bắt buộc (SKU, Tên, Giá)',
+                user: req.session.user
+            });
         }
 
+        // ✅ Kiểm tra SKU trùng
+        const existingSku = await Product.findOne({ sku: sku.toUpperCase() });
+        if (existingSku) {
+            return res.status(400).render('admin/add-product', {
+                error: '❌ SKU "' + sku.toUpperCase() + '" đã tồn tại! Vui lòng chọn SKU khác.',
+                user: req.session.user
+            });
+        }
+
+        // ✅ Tạo sản phẩm mới
         const newProduct = new Product({
             sku: sku.toUpperCase(),
-            name,
+            name: name.trim(),
             price: parseFloat(price),
-            stock: parseInt(stock),
-            category,
-            description,
+            stock: parseInt(stock) || 0,
+            category: category || 'Khác',
+            description: description || '',
             imageUrl: req.file ? `/uploads/products/${req.file.filename}` : '/img/default-product.png'
         });
 
-        await newProduct.save();
-        console.log('✅ Sản phẩm mới được thêm:', name);
-        res.redirect('/admin/products');
+        // ✅ Lưu vào database
+        const savedProduct = await newProduct.save();
+        console.log('✅ Sản phẩm mới được thêm:', name, '(SKU:', savedProduct.sku + ')');
+
+        res.redirect('/admin/products?success=Thêm sản phẩm thành công!');
     } catch (error) {
         console.error('❌ Error in postAddProduct:', error);
-        res.status(500).send('Lỗi khi thêm sản phẩm!');
+
+        // Xóa file upload nếu có lỗi
+        if (req.file) {
+            const fs = require('fs');
+            const filePath = path.join(__dirname, '../public', `/uploads/products/${req.file.filename}`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        // Xử lý các lỗi validation
+        let errorMessage = 'Lỗi khi thêm sản phẩm!';
+        if (error.errors && error.errors.name) {
+            errorMessage = '❌ Tên sản phẩm phải có ít nhất 3 ký tự';
+        } else if (error.errors && error.errors.price) {
+            errorMessage = '❌ Giá sản phẩm không hợp lệ';
+        } else if (error.message.includes('duplicate key')) {
+            errorMessage = '❌ SKU đã tồn tại!';
+        }
+
+        res.status(400).render('admin/add-product', {
+            error: errorMessage,
+            user: req.session.user
+        });
     }
 };
 
@@ -151,7 +193,8 @@ exports.getEditProductPage = async (req, res) => {
 
         res.render('admin/edit-product', {
             product,
-            user: req.session.user
+            user: req.session.user,
+            error: ''
         });
     } catch (error) {
         console.error('❌ Error in getEditProductPage:', error);
@@ -167,30 +210,68 @@ exports.postUpdateProduct = async (req, res) => {
         const { id } = req.params;
         const { name, price, stock, category, description } = req.body;
 
-        const product = await Product.findById(id);
-        if (!product) {
-            return res.status(404).send('Sản phẩm không tồn tại!');
+        // ✅ Validation
+        if (!name || !price) {
+            const product = await Product.findById(id);
+            return res.status(400).render('admin/edit-product', {
+                product,
+                error: '⚠️ Vui lòng điền các trường bắt buộc (Tên, Giá)',
+                user: req.session.user
+            });
         }
 
-        // Cập nhật thông tin
-        product.name = name;
-        product.price = parseFloat(price);
-        product.stock = parseInt(stock);
-        product.category = category;
-        product.description = description;
+        // ✅ Tìm sản phẩm
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).render('admin/products-list', {
+                error: '❌ Sản phẩm không tồn tại!',
+                user: req.session.user
+            });
+        }
 
-        // Nếu có upload ảnh mới
+        // ✅ Cập nhật thông tin
+        product.name = name.trim();
+        product.price = parseFloat(price);
+        product.stock = parseInt(stock) || 0;
+        product.category = category || 'Khác';
+        product.description = description || '';
+
+        // ✅ Nếu có upload ảnh mới
         if (req.file) {
             deleteOldImage(product.imageUrl);
             product.imageUrl = `/uploads/products/${req.file.filename}`;
         }
 
+        // ✅ Lưu thay đổi
         await product.save();
         console.log('✅ Sản phẩm được cập nhật:', name);
-        res.redirect(`/admin/products`);
+
+        res.redirect(`/admin/products?success=Cập nhật sản phẩm thành công!`);
     } catch (error) {
         console.error('❌ Error in postUpdateProduct:', error);
-        res.status(500).send('Lỗi khi cập nhật sản phẩm!');
+
+        // Xóa file upload nếu có lỗi
+        if (req.file) {
+            const fs = require('fs');
+            const filePath = path.join(__dirname, '../public', `/uploads/products/${req.file.filename}`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        const product = await Product.findById(req.params.id);
+        let errorMessage = 'Lỗi khi cập nhật sản phẩm!';
+        if (error.errors && error.errors.name) {
+            errorMessage = '❌ Tên sản phẩm phải có ít nhất 3 ký tự';
+        } else if (error.errors && error.errors.price) {
+            errorMessage = '❌ Giá sản phẩm không hợp lệ';
+        }
+
+        res.status(400).render('admin/edit-product', {
+            product,
+            error: errorMessage,
+            user: req.session.user
+        });
     }
 };
 
@@ -200,12 +281,24 @@ exports.postUpdateProduct = async (req, res) => {
 exports.postDeleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // ✅ Tìm sản phẩm trước khi xóa
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).redirect('/admin/products');
+        }
+
+        // ✅ Xóa ảnh nếu không phải ảnh mặc định
+        deleteOldImage(product.imageUrl);
+
+        // ✅ Soft delete: chỉ đánh dấu là không hoạt động
         await Product.findByIdAndUpdate(id, { isActive: false });
-        console.log('✅ Sản phẩm đã bị ẩn');
-        res.redirect('/admin/products');
+        console.log('✅ Sản phẩm đã bị ẩn:', product.name);
+
+        res.redirect('/admin/products?success=Xóa sản phẩm thành công!');
     } catch (error) {
         console.error('❌ Error in postDeleteProduct:', error);
-        res.status(500).send('Lỗi khi xóa sản phẩm!');
+        res.status(500).redirect('/admin/products?error=Lỗi khi xóa sản phẩm!');
     }
 };
 

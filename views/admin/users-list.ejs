@@ -1,0 +1,73 @@
+<%- include('partials/header') %>
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Khách hàng /</span> Quản lý Người Dùng</h4>
+
+        <div class="card">
+            <div class="card-header border-bottom">
+                <form method="GET" class="d-flex w-50">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Tìm email hoặc tên..."
+                        value="<%= search %>">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bx bx-search"></i></button>
+                </form>
+            </div>
+
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        <% if (users && users.length> 0) { %>
+                            <% users.forEach(u=> { %>
+                                <tr>
+                                    <td><strong>
+                                            <%= u.username %>
+                                        </strong></td>
+                                    <td>
+                                        <%= u.email %>
+                                    </td>
+                                    <td>
+                                        <%= u.phone || 'Chưa cập nhật' %>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge <%= u.role === 'admin' ? 'bg-label-danger' : 'bg-label-primary' %>">
+                                            <%= u.role==='admin' ? 'Quản trị viên' : 'Khách hàng' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge <%= u.isActive ? 'bg-success' : 'bg-secondary' %>">
+                                            <%= u.isActive ? 'Hoạt động' : 'Đã khóa' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <% if (u.role !=='admin' ) { %>
+                                            <form action="/api/users/<%= u._id %>?_method=DELETE" method="POST"
+                                                onsubmit="return confirm('Khóa tài khoản này?');">
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger">Khóa</button>
+                                            </form>
+                                            <% } %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4">Không có dữ liệu</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

@@ -19,6 +19,7 @@ router.post('/auth/login', validateLogin, userController.login);
 
 /**
  * Đăng xuất
+ * 
  * POST /api/auth/logout
  */
 router.post('/auth/logout', auth, userController.logout);

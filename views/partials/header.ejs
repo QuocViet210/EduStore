@@ -64,16 +64,31 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <a href="#" class="dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown"><small><i
-                                    class="fa fa-home me-2"></i> Tài khoản của tôi</small></a>
+                        <a href="#" class="dropdown-item dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown">
+                            <small>
+                                <i class="fa fa-user me-2"></i>
+                                <% if (user) { %>
+                                    Chào, <%= user.username %>
+                                        <% } else { %>
+                                            Tài khoản
+                                            <% } %>
+                            </small>
+                        </a>
                         <div class="dropdown-menu rounded">
-                            <a href="#" class="dropdown-item"> Đăng nhập</a>
-                            <a href="#" class="dropdown-item"> Danh sách yêu thích</a>
-                            <a href="#" class="dropdown-item"> Thẻ của tôi</a>
-                            <a href="#" class="dropdown-item"> Thông báo</a>
-                            <a href="#" class="dropdown-item"> Cài đặt tài khoản</a>
-                            <a href="#" class="dropdown-item"> Tài khoản của tôi</a>
-                            <a href="#" class="dropdown-item"> Đăng xuất</a>
+                            <% if (user) { %>
+                                <a href="/profile" class="dropdown-item"> Hồ sơ cá nhân</a>
+                                <a href="/cart" class="dropdown-item"> Giỏ hàng của tôi</a>
+                                <% if (user.role==='admin' ) { %>
+                                    <a href="/admin" class="dropdown-item text-primary fw-bold"> Vào trang Quản trị</a>
+                                    <% } %>
+                                        <hr class="dropdown-divider">
+                                        <form action="/api/users/auth/logout" method="POST" style="margin: 0;">
+                                            <button type="submit" class="dropdown-item text-danger"> Đăng xuất</button>
+                                        </form>
+                                        <% } else { %>
+                                            <a href="/login" class="dropdown-item"> Đăng nhập</a>
+                                            <a href="/register" class="dropdown-item"> Đăng ký tài khoản</a>
+                                            <% } %>
                         </div>
                     </div>
                 </div>

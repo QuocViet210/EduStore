@@ -53,9 +53,8 @@ const productSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Tự động cập nhật updatedAt trước khi lưu
-productSchema.pre('save', function (next) {
+productSchema.pre('save', function () {
     this.updatedAt = new Date();
-    next();
 });
 
 module.exports = mongoose.model('Product', productSchema);

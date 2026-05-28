@@ -1,0 +1,503 @@
+{
+    "info": {
+        "_postman_id": "van-phong-pham-shop-collection",
+        "name": "Van Phong Pham Shop - API Testing",
+        "description": "Complete API collection for testing all endpoints",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "🔧 Server Status",
+            "item": [
+                {
+                    "name": "Check Server",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📦 Products - Read (Public)",
+            "item": [
+                {
+                    "name": "Get All Products",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/products",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products"
+                            ]
+                        },
+                        "description": "Get list of all products with pagination"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Products - Page 1",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/products?page=1&limit=5",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "5"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Products",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/products?search=bút",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "bút"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Filter by Category",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/products?category=Bút",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "Bút"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Product Details (Replace ID)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/products/REPLACE_WITH_PRODUCT_ID",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products",
+                                "REPLACE_WITH_PRODUCT_ID"
+                            ]
+                        },
+                        "description": "Get details of a specific product. Replace PRODUCT_ID with actual ID from Get All Products"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🔐 Authentication",
+            "item": [
+                {
+                    "name": "Register New Account",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"testuser_{{$timestamp}}\",\n  \"email\": \"testuser_{{$timestamp}}@example.com\",\n  \"password\": \"Test@12345\",\n  \"confirmPassword\": \"Test@12345\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:3000/api/users/auth/register",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "users",
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Test@12345\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:3000/api/users/auth/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "users",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Profile (Requires Auth)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/users/profile/me",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "users",
+                                "profile",
+                                "me"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/users/auth/logout",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "users",
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🛠️ Products - CRUD (Admin Only)",
+            "item": [
+                {
+                    "name": "CREATE - Add New Product",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "sku",
+                                    "value": "SOH-001",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "Sổ tay da cao cấp",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "price",
+                                    "value": "50000",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "stock",
+                                    "value": "50",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "category",
+                                    "value": "Sổ",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Sổ tay bìa da cao cấp, 100 trang",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "http://localhost:3000/api/products",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products"
+                            ]
+                        },
+                        "description": "Create a new product. Requires Admin authentication. Select an image file for upload."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "UPDATE - Edit Product (Replace ID)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Sổ tay da (cập nhật)\",\n  \"price\": 55000,\n  \"stock\": 45,\n  \"description\": \"Sổ tay bìa da cao cấp, 100 trang (cập nhật)\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:3000/api/products/REPLACE_WITH_PRODUCT_ID",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products",
+                                "REPLACE_WITH_PRODUCT_ID"
+                            ]
+                        },
+                        "description": "Update an existing product. Replace PRODUCT_ID with actual ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE - Remove Product (Replace ID)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/api/products/REPLACE_WITH_PRODUCT_ID",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "api",
+                                "products",
+                                "REPLACE_WITH_PRODUCT_ID"
+                            ]
+                        },
+                        "description": "Delete a product. Replace PRODUCT_ID with actual ID"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🧪 Test Scenarios",
+            "item": [
+                {
+                    "name": "Scenario 1 - Full CRUD Flow",
+                    "item": [
+                        {
+                            "name": "1. Get Product ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "http://localhost:3000/api/products?limit=1",
+                                    "protocol": "http",
+                                    "host": [
+                                        "localhost"
+                                    ],
+                                    "port": "3000",
+                                    "path": [
+                                        "api",
+                                        "products"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "limit",
+                                            "value": "1"
+                                        }
+                                    ]
+                                },
+                                "description": "Copy the _id from response for next steps"
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "2. View Product Details",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "http://localhost:3000/api/products/PRODUCT_ID_FROM_STEP_1",
+                                    "protocol": "http",
+                                    "host": [
+                                        "localhost"
+                                    ],
+                                    "port": "3000",
+                                    "path": [
+                                        "api",
+                                        "products",
+                                        "PRODUCT_ID_FROM_STEP_1"
+                                    ]
+                                },
+                                "description": "Replace PRODUCT_ID_FROM_STEP_1 with ID from previous response"
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "3. Create New Product",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "formdata",
+                                    "formdata": [
+                                        {
+                                            "key": "sku",
+                                            "value": "TEST-{{$timestamp}}",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "key": "name",
+                                            "value": "Product Test {{$timestamp}}\","type": "text"
+                                        },
+                                        {
+                                            "key": "price",
+                                            "value": "99999",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "key": "stock",
+                                            "value": "100",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "key": "category",
+                                            "value": "Khác",
+                                            "type": "text"
+                                        },
+                                        {
+                                            "key": "description",
+                                            "value": "Test product\","type": "text"
+                                        }
+                                    ]
+                                },
+                                "url": {
+                                    "raw": "http://localhost:3000/api/products",
+                                    "protocol": "http",
+                                    "host": [
+                                        "localhost"
+                                    ],
+                                    "port": "3000",
+                                    "path": [
+                                        "api",
+                                        "products"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

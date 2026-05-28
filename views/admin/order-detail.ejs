@@ -1,6 +1,6 @@
-<%- include('../partials/header') %>
+<%- include('partials/header') %>
 
-    <div class="container mt-5">
+    <div class="container-xxl flex-grow-1 container-p-y">
         <h2 class="mb-4">📌 Chi Tiết Đơn Hàng: <%= order._id.toString().slice(-8).toUpperCase() %>
         </h2>
 
@@ -150,4 +150,4 @@
         <a href="/admin/orders" class="btn btn-secondary">← Quay Lại</a>
     </div>
 
-    <%- include('../partials/footer') %>
+    <%- include('partials/footer') %>

@@ -1,33 +1,52 @@
 /**
- * Middleware kiểm tra xác thực người dùng
+ * Middleware kiểm tra xác thực người dùng chung (User)
  */
 const auth = (req, res, next) => {
+    // Nếu chưa đăng nhập
     if (!req.session.user) {
-        return res.status(401).json({
-            success: false,
-            message: 'Vui lòng đăng nhập để truy cập'
-        });
+        // Kiểm tra xem yêu cầu là API hay lướt Web
+        if (req.originalUrl.startsWith('/api')) {
+            return res.status(401).json({
+                success: false,
+                message: 'Vui lòng đăng nhập để truy cập'
+            });
+        } else {
+            // Khách hàng bấm nút trên web -> Đá về trang đăng nhập
+            return res.redirect('/login');
+        }
     }
+
     req.user = req.session.user;
     next();
 };
 
 /**
- * Middleware kiểm tra quyền admin
+ * Middleware kiểm tra quyền Quản trị viên (Admin)
  */
 const adminAuth = (req, res, next) => {
+    // 1. Kiểm tra đăng nhập trước
     if (!req.session.user) {
-        return res.status(401).json({
-            success: false,
-            message: 'Vui lòng đăng nhập'
-        });
+        if (req.originalUrl.startsWith('/api')) {
+            return res.status(401).json({
+                success: false,
+                message: 'Vui lòng đăng nhập'
+            });
+        } else {
+            return res.redirect('/login');
+        }
     }
 
+    // 2. Kiểm tra quyền Admin
     if (req.session.user.role !== 'admin') {
-        return res.status(403).json({
-            success: false,
-            message: 'Bạn không có quyền truy cập'
-        });
+        if (req.originalUrl.startsWith('/api')) {
+            return res.status(403).json({
+                success: false,
+                message: 'Bạn không có quyền truy cập khu vực Admin!'
+            });
+        } else {
+            // Không phải Admin mà ráng vào lướt web Admin -> Đá về trang chủ
+            return res.redirect('/');
+        }
     }
 
     req.user = req.session.user;

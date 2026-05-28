@@ -54,8 +54,8 @@ const orderSchema = new mongoose.Schema({
     // Phương thức thanh toán
     paymentMethod: {
         type: String,
-        enum: ['cash', 'card', 'bank_transfer'],
-        default: 'cash'
+        enum: ['cash', 'card', 'bank_transfer', 'cod', 'transfer', 'COD', 'Bank Transfer'],
+        default: 'cod'
     },
 
     paymentStatus: {

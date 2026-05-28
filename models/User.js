@@ -42,27 +42,16 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Thay thế đoạn cũ bằng đoạn này trong file models/User.js
+// Pre-save hook: Hash password before saving
+userSchema.pre('save', function (next) {
+    // 1. Tự động cập nhật thời gian
+    this.updatedAt = new Date();
 
-userSchema.pre('save', async function (next) {
-    // 1. Kiểm tra: nếu mật khẩu không bị thay đổi thì không cần băm lại
-    if (!this.isModified('password')) {
-        return next();
-    }
-
-    try {
-        // 2. Băm mật khẩu (Dùng crypto theo ý bạn)
+    // 2. Mã hóa mật khẩu nếu có sự thay đổi (tạo mới hoặc đổi pass)
+    if (this.isModified('password')) {
         this.password = crypto.createHash('sha256').update(this.password).digest('hex');
-
-        // 3. Cập nhật updatedAt
-        this.updatedAt = new Date();
-
-        // 4. Gọi next() để hoàn thành middleware
-        next();
-    } catch (error) {
-        // Nếu có lỗi, truyền error vào next để Mongoose bắt lỗi
-        next(error);
     }
+
 });
 
 // Phương thức so sánh mật khẩu

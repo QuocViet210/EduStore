@@ -5,7 +5,7 @@
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-body p-5">
-                        <h2 class="text-center mb-4">✍️ Đăng Ký</h2>
+                        <h2 class="text-center mb-4"> Đăng Ký</h2>
 
                         <% if (typeof error !=='undefined' && error) { %>
                             <div class="alert alert-danger">
@@ -42,7 +42,7 @@
                                 </form>
 
                                 <div class="text-center">
-                                    <p>Đã có tài khoản? <a href="/users/login">Đăng nhập</a></p>
+                                    <p>Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
                                 </div>
                     </div>
                 </div>
@@ -71,15 +71,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('✅ Đăng ký thành công! Vui lòng đăng nhập.');
-                    window.location.href = '/users/login';
+                    alert(' Đăng ký thành công! Vui lòng đăng nhập.');
+                    window.location.href = '/';
                 } else {
                     const errorMsg = data.errors?.map(e => e.message).join('\n') || data.message;
-                    alert('❌ ' + errorMsg);
+                    alert(errorMsg);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('❌ Lỗi Server!');
+                alert('Lỗi Server!');
             }
         });
     </script>
