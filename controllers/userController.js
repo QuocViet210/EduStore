@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Order = require('../models/Order');
 const { sendSuccess, sendError, getPagination } = require('../utils/responseHandler');
 const crypto = require('crypto');
 
@@ -430,4 +431,66 @@ exports.getChangePasswordPage = (req, res) => {
         return res.redirect('/login');
     }
     res.render('change-password', { error: '' });
+};
+
+/**
+ * 🔒 RENDER/API: Người dùng tự cập nhật thông tin cá nhân của mình
+ * PUT /api/users/profile/update
+ */
+exports.updateMyProfile = async (req, res) => {
+    try {
+        // Lấy ID người dùng từ Session đã đăng nhập
+        const userId = req.session.user._id;
+        const { username, phone, address } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Người dùng không tồn tại' });
+        }
+
+        // Kiểm tra xem username có bị trùng với người khác không
+        if (username && username !== user.username) {
+            const existingUsername = await User.findOne({ username: username.trim() });
+            if (existingUsername) {
+                return res.status(400).json({ success: false, message: 'Tên hiển thị này đã có người sử dụng' });
+            }
+            user.username = username.trim();
+        }
+
+        // Cập nhật SĐT và Địa chỉ
+        if (phone !== undefined) user.phone = phone.trim();
+        if (address !== undefined) user.address = address.trim();
+
+        // Lưu vào DB
+        await user.save();
+
+        // Quan trọng: Cập nhật lại cái tên trong Session để Header hiển thị đúng tên mới
+        req.session.user.username = user.username;
+
+        res.json({ success: true, message: 'Cập nhật thông tin thành công', user });
+
+    } catch (error) {
+        console.error('❌ Error in updateMyProfile:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi lưu thông tin' });
+    }
+};
+
+exports.getMyOrdersPage = async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.redirect('/api/auth/login');
+        }
+
+        // Lấy đơn hàng dựa vào trường "userId" trong Schema của em
+        const orders = await Order.find({ userId: req.session.user._id }).sort({ createdAt: -1 });
+
+        res.render('my-orders', {
+            user: req.session.user,
+            orders: orders
+        });
+
+    } catch (error) {
+        console.error('❌ Lỗi khi lấy danh sách đơn hàng cá nhân:', error);
+        res.status(500).send('Lỗi máy chủ khi tải đơn hàng!');
+    }
 };

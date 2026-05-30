@@ -50,7 +50,7 @@ exports.getProductsAPI = async (req, res) => {
         let filter = { isActive: true };
 
         if (category) {
-            filter.category = category;
+            filter.category = new RegExp(category.trim(), 'i');
         }
 
         if (search) {
@@ -87,6 +87,8 @@ exports.getProductsAPI = async (req, res) => {
 exports.getShop = async (req, res) => {
     try {
         const categoryFilter = req.query.category || '';
+        const searchFilter = req.query.search || ''; // Lấy từ khóa tìm kiếm trên URL
+
         const categories = await Product.distinct('category', { isActive: true });
         const counts = await Product.aggregate([
             { $match: { isActive: true } },
@@ -97,17 +99,34 @@ exports.getShop = async (req, res) => {
             return acc;
         }, {});
 
-        const filter = categoryFilter ? { category: categoryFilter, isActive: true } : { isActive: true };
+        // Tạo bộ lọc động
+        let filter = { isActive: true };
+
+        if (categoryFilter) {
+            filter.category = new RegExp(categoryFilter.trim(), 'i');
+        }
+
+        // Tích hợp Fuzzy Search cho lần load trang đầu tiên
+        if (searchFilter) {
+            const searchRegex = new RegExp(searchFilter.trim(), 'i');
+            filter.$or = [
+                { name: searchRegex },
+                { description: searchRegex },
+                { sku: searchRegex }
+            ];
+        }
+
         const products = await Product.find(filter).sort({ createdAt: -1 });
 
         res.render('shop', {
             products,
             categories,
             counts: countMap,
-            selectedCategory: categoryFilter
+            selectedCategory: categoryFilter,
+            searchQuery: searchFilter // Truyền biến này ra giao diện
         });
     } catch (error) {
-        console.error('❌ Error in getShop:', error);
+        console.error('Error in getShop:', error);
         res.status(500).send('Lỗi Server!');
     }
 };
@@ -292,11 +311,11 @@ exports.restoreProduct = async (req, res) => {
         product.isActive = true;
         await product.save();
 
-        console.log(`✅ Khôi phục sản phẩm: ${product.name}`);
+        console.log(`Khôi phục sản phẩm: ${product.name}`);
         sendSuccess(res, product, 'Khôi phục sản phẩm thành công');
 
     } catch (error) {
-        console.error('❌ Error in restoreProduct:', error);
+        console.error('Error in restoreProduct:', error);
         sendError(res, 'Lỗi khi khôi phục sản phẩm', 500);
     }
 };

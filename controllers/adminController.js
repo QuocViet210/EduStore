@@ -18,51 +18,43 @@ const deleteOldImage = (imagePath) => {
 };
 
 /**
- * ✅ RENDER: Trang Dashboard Admin
+ *  RENDER: Trang Dashboard Admin
  */
 exports.getDashboard = async (req, res) => {
     try {
-        // Lấy thống kê
+        // 1. Lấy số lượng sản phẩm và khách hàng thực tế từ DB
         const totalProducts = await Product.countDocuments({ isActive: true });
-        const totalUsers = await User.countDocuments({ isActive: true });
-        const totalOrders = await Order.countDocuments();
+        const totalUsers = await User.countDocuments({ role: 'user' });
 
-        const totalRevenueResult = await Order.aggregate([
-            { $match: { paymentStatus: 'paid' } },
-            { $group: { _id: null, total: { $sum: '$totalPrice' } } }
-        ]);
-        const totalRevenue = totalRevenueResult[0]?.total || 0;
+        // 2. Lấy số lượng đơn hàng và tổng doanh thu
+        let totalOrders = 0;
+        let totalRevenue = 0;
 
-        // Lấy đơn hàng gần đây (10 cái mới nhất)
-        const recentOrders = await Order.find()
-            .populate('userId', 'username email')
-            .sort({ createdAt: -1 })
-            .limit(10);
+        // Đặt trong khối try-catch nhỏ đề phòng trường hợp database của em chưa tạo bảng Orders
+        try {
+            const orders = await Order.find();
+            totalOrders = orders.length;
+            totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+        } catch (orderErr) {
+            console.log("⚠️ Cảnh báo: Chưa tìm thấy bảng Order trong DB hoặc chưa setup xong Order Model!");
+        }
 
-        // Lấy sản phẩm bán chạy nhất
-        const topProducts = await Product.find({ isActive: true })
-            .sort({ createdAt: -1 })
-            .limit(5);
-
+        // 3. 🌟 QUAN TRỌNG NHẤT: Đóng gói đầy đủ biến ném sang EJS
         res.render('admin/dashboard', {
-            stats: {
-                totalProducts,
-                totalUsers,
-                totalOrders,
-                totalRevenue
-            },
-            recentOrders,
-            topProducts,
-            user: req.session.user
+            user: req.session.user,
+            totalProducts,   // Đã truyền
+            totalUsers,      // Đã truyền
+            totalOrders,     // ĐÃ CÓ BIẾN NÀY (Sẽ sửa được lỗi totalOrders is not defined)
+            totalRevenue     // Đã truyền
         });
+
     } catch (error) {
-        console.error('❌ Error in getDashboard:', error);
-        res.status(500).send('Lỗi Server!');
+        console.error('❌ Lỗi xử lý tại getDashboard:', error);
+        res.status(500).send('Lỗi máy chủ nội bộ!');
     }
 };
-
 /**
- * ✅ RENDER: Trang danh sách sản phẩm
+ *  RENDER: Trang danh sách sản phẩm
  */
 exports.getProductsList = async (req, res) => {
     try {
@@ -419,4 +411,43 @@ exports.getUsersList = async (req, res) => {
         console.error('❌ Error in getUsersList:', error);
         res.status(500).send('Lỗi Server!');
     }
+};
+// API: Lật trạng thái Khóa / Mở khóa người dùng
+exports.toggleUserStatus = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // 1. Tìm user trong Database
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+        }
+
+        // 2. Không cho phép Admin tự khóa chính mình
+        if (user.role === 'admin' && user._id.toString() === req.session.user._id.toString()) {
+            return res.status(400).json({ success: false, message: 'Không thể tự khóa tài khoản của chính mình!' });
+        }
+
+        // 3. Lật trạng thái (Nếu đang true thì thành false, và ngược lại)
+        user.isActive = !user.isActive;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: `Đã ${user.isActive ? 'mở khóa' : 'khóa'} tài khoản thành công!`,
+            isActive: user.isActive // Trả về trạng thái mới để giao diện tự cập nhật
+        });
+
+    } catch (error) {
+        console.error('❌ Lỗi khi khóa tài khoản:', error);
+        res.status(500).json({ success: false, message: 'Lỗi Server' });
+    }
+};
+
+/**
+ * 💬 RENDER: Trang trực Chat của Admin
+ * GET /admin/chat
+ */
+exports.getChatPage = (req, res) => {
+    res.render('admin/chat', { user: req.session.user });
 };

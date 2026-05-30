@@ -65,7 +65,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <p class="mb-0 text-danger fw-bold">
+                                        <p id="subtotal-<%= item._id %>" class="mb-0 text-danger fw-bold">
                                             <%= item.subtotal.toLocaleString('vi-VN') %> đ
                                         </p>
                                     </td>
@@ -99,20 +99,20 @@
                                 <h4 class="mb-4 border-bottom pb-2">Tóm tắt đơn hàng</h4>
                                 <div class="d-flex justify-content-between mb-3">
                                     <h6 class="mb-0">Tạm tính:</h6>
-                                    <p class="mb-0 fw-bold">
+                                    <p id="cart-tamtinh" class="mb-0 fw-bold">
                                         <%= subtotal.toLocaleString('vi-VN') %> đ
                                     </p>
                                 </div>
                                 <div class="d-flex justify-content-between mb-4">
                                     <h6 class="mb-0">Phí vận chuyển:</h6>
-                                    <p class="mb-0 text-muted">
+                                    <p id="cart-phi-van-chuyen" class="mb-0 text-muted">
                                         <%= shipping.toLocaleString('vi-VN') %> đ
                                     </p>
                                 </div>
                                 <div
                                     class="py-3 mb-4 border-top border-bottom d-flex justify-content-between align-items-center">
                                     <h5 class="mb-0">Tổng cộng:</h5>
-                                    <h4 class="mb-0 text-danger fw-bold">
+                                    <h4 id="cart-tongcong" class="mb-0 text-danger fw-bold">
                                         <%= (subtotal + shipping).toLocaleString('vi-VN') %> đ
                                     </h4>
                                 </div>

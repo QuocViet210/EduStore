@@ -29,10 +29,15 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: '/img/default-product.png'
     },
+    // Tìm đoạn khai báo category và sửa lại như sau:
     category: {
         type: String,
-        enum: ['Bút', 'Sổ', 'Dấu', 'Khác'],
-        default: 'Khác'
+        required: [true, 'Danh mục không được để trống'],
+        // ENUM: Chỉ cho phép lưu 1 trong các giá trị dưới đây. Nhập sai sẽ bị chặn!
+        enum: {
+            values: ['Bút', 'Vở', 'Thước', 'Băng keo', 'Giấy', 'Máy tính', 'Khác'],
+            message: 'Danh mục {VALUE} không hợp lệ! Vui lòng chọn danh mục có sẵn.'
+        }
     },
     description: {
         type: String,

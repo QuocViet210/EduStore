@@ -41,19 +41,11 @@
                 </div>
 
                 <div class="col-lg-9 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="rounded mb-4 position-relative">
-                        <img src="/img/van-phong-pham-01.jpg" class="img-fluid rounded w-100" style="height: 250px;"
-                            alt="Văn phòng phẩm">
-                        <div class="position-absolute rounded d-flex flex-column align-items-center justify-content-center text-center"
-                            style="width: 100%; height: 250px; top: 0; left: 0; background: rgba(242, 139, 0, 0.3);">
-                            <h4 class="display-5 text-primary">BỘ SƯU TẬP EDUSTORE</h4>
-                            <a href="/shop" class="btn btn-primary rounded-pill mt-3">Mua ngay</a>
-                        </div>
-                    </div>
+
 
                     <div class="tab-content">
                         <div id="tab-5" class="tab-pane fade show p-0 active">
-                            <div class="row g-4">
+                            <div class="row g-4" id="product-list-container">
                                 <% if (products && products.length) { %>
                                     <% products.forEach((product, index)=> { %>
                                         <div class="col-lg-4">
@@ -104,4 +96,90 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Lấy thanh tìm kiếm từ Header (Vì header được include dùng chung)
+            const searchForm = document.querySelector('form[action="/shop"]');
+            const productContainer = document.getElementById('product-list-container');
+
+            if (searchForm && productContainer) {
+                const searchInput = searchForm.querySelector('input[name="search"]');
+                const categorySelect = searchForm.querySelector('select[name="category"]');
+
+                // Hàm gọi API lấy dữ liệu và render lại danh sách
+                async function fetchProducts() {
+                    const keyword = searchInput.value;
+                    const category = categorySelect.value;
+
+                    try {
+                        // Hiển thị hiệu ứng loading
+                        productContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+
+                        // Gọi API ngầm xuống getProductsAPI
+                        const response = await fetch(`/api/products?search=${encodeURIComponent(keyword)}&category=${encodeURIComponent(category)}`);
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Chú ý: API của em bọc data trong result.data.products
+                            const products = result.data.products;
+                            productContainer.innerHTML = '';
+
+                            if (products.length === 0) {
+                                productContainer.innerHTML = '<div class="col-12 text-center py-5"><h5 class="text-muted">Không tìm thấy sản phẩm nào!</h5></div>';
+                                return;
+                            }
+
+                            // Render từng sản phẩm
+                            products.forEach((product, index) => {
+                                const formatPrice = (price) => price.toLocaleString('vi-VN') + ' đ';
+                                const delay = 0.1 + (index % 6) * 0.05;
+
+                                const html = `
+                            <div class="col-lg-4">
+                                <div class="product-item rounded wow fadeInUp" data-wow-delay="${delay}s">
+                                    <div class="product-item-inner border rounded">
+                                        <div class="product-item-inner-item">
+                                            <img src="${product.imageUrl}" class="img-fluid w-100 rounded-top" alt="${product.name}" style="height: 200px; object-fit: contain;">
+                                            <div class="product-new">Mới</div>
+                                        </div>
+                                        <div class="text-center rounded-bottom p-4">
+                                            <a href="/shop?category=${encodeURIComponent(product.category)}" class="d-block mb-2 text-muted">${product.category}</a>
+                                            <a href="/product/${product._id}" class="d-block h4 text-truncate">${product.name}</a>
+                                            <span class="text-primary fs-5 fw-bold">${formatPrice(product.price)}</span>
+                                        </div>
+                                        <div class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
+                                            <a href="/cart/add/${product._id}" class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4">
+                                                <i class="fas fa-shopping-cart me-2"></i> Thêm vào giỏ
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                                productContainer.insertAdjacentHTML('beforeend', html);
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Lỗi fetch sản phẩm:', error);
+                    }
+                }
+
+                // 2. Kỹ thuật Debounce - Tự động tìm kiếm khi đang gõ
+                let timeout = null;
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(fetchProducts, 500); // Ngừng gõ 0.5s sẽ tự động tìm
+                });
+
+                // 3. Khi đổi danh mục cũng tự động tìm
+                categorySelect.addEventListener('change', fetchProducts);
+
+                // 4. Ngăn form reload trang khi bấm nút Enter
+                searchForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    fetchProducts();
+                });
+            }
+        });
+    </script>
     <%- include('partials/footer') %>

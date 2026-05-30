@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const { adminAuth } = require('../middleware/auth');
+const { adminAuth, requireAdmin } = require('../middleware/auth');
 const upload = require('../config/multer');
+
 
 // ✅ MIDDLEWARE: Kiểm tra admin
 router.use(adminAuth);
 
 // ✅ DASHBOARD
 router.get('/', adminController.getDashboard);
+
+router.get('/chat', adminAuth, adminController.getChatPage);
 
 // ✅ PRODUCTS MANAGEMENT
 router.get('/products', adminController.getProductsList);
@@ -25,5 +28,6 @@ router.post('/orders/:id/update-status', adminController.postUpdateOrderStatus);
 
 // ✅ USERS MANAGEMENT
 router.get('/users', adminController.getUsersList);
+router.patch('/users/toggle-status/:id', requireAdmin, adminController.toggleUserStatus);
 
 module.exports = router;

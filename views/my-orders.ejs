@@ -1,0 +1,107 @@
+<%- include('partials/header') %>
+
+    <div class="container mt-5 mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <h3 class="fw-bold text-primary m-0"><i class="fas fa-box-open me-2"></i> Lịch Sử Đơn Hàng</h3>
+            <a href="/profile/me" class="btn btn-sm btn-outline-secondary ms-auto">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại hồ sơ
+            </a>
+        </div>
+
+        <% if (orders && orders.length> 0) { %>
+            <div class="row g-4">
+                <% orders.forEach(order=> { %>
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0">
+                            <div
+                                class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center border-bottom-0 py-3">
+                                <div>
+                                    <span class="text-muted small">Mã đơn:</span>
+                                    <span class="fw-bold text-dark font-monospace">#<%=
+                                            order._id.toString().slice(-8).toUpperCase() %></span>
+                                    <span class="mx-2 text-muted">|</span>
+                                    <span class="text-muted small">Ngày đặt:</span>
+                                    <span class="text-dark">
+                                        <%= new Date(order.createdAt).toLocaleDateString('vi-VN') %>
+                                    </span>
+                                </div>
+
+                                <% let badgeClass='bg-secondary' ; let statusText=order.status; if
+                                    (order.status==='pending' ) { badgeClass='bg-warning text-dark' ;
+                                    statusText='Chờ xác nhận' ; } else if (order.status==='confirmed' ) {
+                                    badgeClass='bg-info text-dark' ; statusText='Đã xác nhận' ; } else if
+                                    (order.status==='shipped' ) { badgeClass='bg-primary' ; statusText='Đang giao hàng'
+                                    ; } else if (order.status==='delivered' ) { badgeClass='bg-success' ;
+                                    statusText='Đã giao thành công' ; } else if (order.status==='cancelled' ) {
+                                    badgeClass='bg-danger' ; statusText='Đã hủy' ; } %>
+                                    <span class="badge <%= badgeClass %> px-3 py-2 rounded-pill fs-6 shadow-sm">
+                                        <%= statusText %>
+                                    </span>
+                            </div>
+
+                            <div class="card-body p-4">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless align-middle m-0">
+                                        <tbody>
+                                            <% order.items.forEach(item=> { %>
+                                                <tr class="border-bottom">
+                                                    <td style="width: 60%">
+                                                        <div class="fw-bold text-dark">
+                                                            <%= item.productName %>
+                                                        </div>
+                                                        <small class="text-muted">Đơn giá: <%=
+                                                                item.price.toLocaleString('vi-VN') %> đ</small>
+                                                    </td>
+                                                    <td class="text-center text-muted" style="width: 15%">x<%=
+                                                            item.quantity %>
+                                                    </td>
+                                                    <td class="text-end fw-bold text-dark" style="width: 25%">
+                                                        <%= (item.price * item.quantity).toLocaleString('vi-VN') %> đ
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div
+                                class="card-footer bg-white p-4 border-top-0 d-flex flex-wrap justify-content-between align-items-center">
+                                <div class="text-muted small">
+                                    <div><i class="fas fa-map-marker-alt me-2 text-danger"></i> <strong>Giao
+                                            tới:</strong>
+                                        <%= order.shippingAddress.address %>, <%= order.shippingAddress.ward %>, <%=
+                                                    order.shippingAddress.district %>, <%= order.shippingAddress.city %>
+                                    </div>
+                                    <div class="mt-1"><i class="fas fa-wallet me-2 text-success"></i> <strong>Thanh
+                                            toán:</strong> Phương thức <%= order.paymentMethod.toUpperCase() %>
+                                            <span
+                                                class="badge <%= order.paymentStatus === 'paid' ? 'bg-success' : 'bg-secondary' %> ms-1">
+                                                <%= order.paymentStatus==='paid' ? 'Đã thanh toán' : 'Chưa thanh toán'
+                                                    %>
+                                            </span>
+                                    </div>
+                                </div>
+                                <div class="text-end mt-3 mt-md-0">
+                                    <span class="text-muted me-2">Tổng thanh toán:</span>
+                                    <h4 class="text-danger fw-bold d-inline mb-0">
+                                        <%= order.totalPrice.toLocaleString('vi-VN') %> VNĐ
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+            <% } else { %>
+                <div class="text-center py-5 bg-white rounded shadow-sm">
+                    <div class="mb-3 text-muted"><i class="fas fa-shopping-bag fa-4x"></i></div>
+                    <h5>Bạn chưa có đơn hàng nào!</h5>
+                    <p class="text-muted small">Hãy ghé qua cửa hàng để chọn cho mình những món đồ dùng học tập thật ưng
+                        ý nhé.</p>
+                    <a href="/shop" class="btn btn-primary rounded-pill px-4 mt-2">Mua sắm ngay</a>
+                </div>
+                <% } %>
+    </div>
+
+    <%- include('partials/footer') %>

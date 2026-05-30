@@ -39,8 +39,13 @@ const userSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    isActive: {
+        type: Boolean,
+        default: true // Mặc định ai mới đăng ký cũng được hoạt động
     }
 }, { timestamps: true });
+
 
 // Pre-save hook: Hash password before saving
 userSchema.pre('save', function (next) {

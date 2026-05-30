@@ -53,4 +53,13 @@ const adminAuth = (req, res, next) => {
     next();
 };
 
-module.exports = { auth, adminAuth };
+// Middleware kiểm tra xem user có phải là admin không
+const requireAdmin = (req, res, next) => {
+    if (req.session.user && req.session.user.role === 'admin') {
+        next();
+    } else {
+        return res.status(403).send('Truy cập bị từ chối! Bạn không có quyền quản trị.');
+    }
+};
+
+module.exports = { auth, adminAuth, requireAdmin };

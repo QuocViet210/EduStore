@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="utf-8">
     <title>EduStore - Cửa hàng Văn phòng Phẩm</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+    <meta content="Văn phòng phẩm, đồ dùng học tập, EduStore" name="keywords">
+    <meta content="Cửa hàng cung cấp đồ dùng học tập, văn phòng phẩm chất lượng cao" name="description">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,75 +19,59 @@
 
     <link href="/lib/animate/animate.min.css" rel="stylesheet">
     <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="/css/style.css" rel="stylesheet">
 </head>
 
 <body>
-
-
     <div class="container-fluid px-5 d-none border-bottom d-lg-block">
         <div class="row gx-0 align-items-center">
             <div class="col-lg-4 text-center text-lg-start mb-lg-0">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
-                    <a href="#" class="text-muted me-2"> Trợ giúp</a><small> / </small>
-                    <a href="#" class="text-muted mx-2"> Hỗ trợ</a><small> / </small>
-                    <a href="#" class="text-muted ms-2"> Liên hệ</a>
+                    <a href="/contact" class="text-muted me-2"> Trợ giúp</a><small> / </small>
+                    <a href="/contact" class="text-muted mx-2"> Hỗ trợ</a><small> / </small>
+                    <a href="/contact" class="text-muted ms-2"> Liên hệ</a>
                 </div>
             </div>
             <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
-                <small class="text-dark">Gọi cho chúng tôi:</small>
-                <a href="#" class="text-muted">(+84) 1234 567890</a>
+                <small class="text-dark">Hotline hỗ trợ:</small>
+                <a href="tel:+84793661190" class="text-muted ms-2 fw-bold">(+84) 793 661 190</a>
             </div>
 
             <div class="col-lg-4 text-center text-lg-end">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
                     <div class="dropdown">
-                        <a href="#" class="dropdown-toggle text-muted me-2" data-bs-toggle="dropdown"><small>
-                                VND</small></a>
-                        <div class="dropdown-menu rounded">
-                            <a href="#" class="dropdown-item"> VND</a>
-                            <a href="#" class="dropdown-item"> VND</a>
-                        </div>
-                    </div>
-                    <div class="dropdown">
-                        <a href="#" class="dropdown-toggle text-muted mx-2" data-bs-toggle="dropdown"><small>
-                                Tiếng Việt</small></a>
-                        <div class="dropdown-menu rounded">
-                            <a href="#" class="dropdown-item"> Tiếng Việt</a>
-                            <a href="#" class="dropdown-item"> Tiếng Anh</a>
-                            <a href="#" class="dropdown-item"> 中文</a>
-                            <a href="#" class="dropdown-item"> 日本語</a>
-                        </div>
-                    </div>
-                    <div class="dropdown">
                         <a href="#" class="dropdown-item dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown">
                             <small>
                                 <i class="fa fa-user me-2"></i>
-                                <% if (user) { %>
+                                <% if (typeof user !=='undefined' && user) { %>
                                     Chào, <%= user.username %>
                                         <% } else { %>
                                             Tài khoản
                                             <% } %>
                             </small>
                         </a>
-                        <div class="dropdown-menu rounded">
-                            <% if (user) { %>
-                                <a href="/profile" class="dropdown-item"> Hồ sơ cá nhân</a>
-                                <a href="/cart" class="dropdown-item"> Giỏ hàng của tôi</a>
+                        <div class="dropdown-menu rounded shadow-sm">
+                            <% if (typeof user !=='undefined' && user) { %>
+                                <a href="/profile" class="dropdown-item"><i
+                                        class="fas fa-id-badge me-2 text-primary"></i>Hồ sơ cá nhân</a>
+                                <a href="/cart" class="dropdown-item"><i
+                                        class="fas fa-shopping-cart me-2 text-primary"></i>Giỏ hàng của tôi</a>
                                 <% if (user.role==='admin' ) { %>
-                                    <a href="/admin" class="dropdown-item text-primary fw-bold"> Vào trang Quản trị</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="/admin" class="dropdown-item text-danger fw-bold"><i
+                                            class="fas fa-user-shield me-2"></i>Khu vực Quản trị</a>
                                     <% } %>
-                                        <hr class="dropdown-divider">
+                                        <div class="dropdown-divider"></div>
                                         <form action="/api/users/auth/logout" method="POST" style="margin: 0;">
-                                            <button type="submit" class="dropdown-item text-danger"> Đăng xuất</button>
+                                            <button type="submit" class="dropdown-item text-danger"><i
+                                                    class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
                                         </form>
                                         <% } else { %>
-                                            <a href="/login" class="dropdown-item"> Đăng nhập</a>
-                                            <a href="/register" class="dropdown-item"> Đăng ký tài khoản</a>
+                                            <a href="/login" class="dropdown-item"><i
+                                                    class="fas fa-sign-in-alt me-2 text-primary"></i>Đăng nhập</a>
+                                            <a href="/register" class="dropdown-item"><i
+                                                    class="fas fa-user-plus me-2 text-primary"></i>Đăng ký tài khoản</a>
                                             <% } %>
                         </div>
                     </div>
@@ -100,44 +84,50 @@
             <div class="col-md-4 col-lg-3 text-center text-lg-start">
                 <div class="d-inline-flex align-items-center">
                     <a href="/" class="navbar-brand p-0">
-                        <h1 class="display-5 text-primary m-0" style="white-space: nowrap;"><i
-                                class="fas fa-shopping-bag text-secondary me-2"></i>EduStore</h1>
+                        <h1 class="display-5 text-primary m-0" style="white-space: nowrap;">
+                            <i class="fas fa-book-open text-secondary me-2"></i>EduStore
+                        </h1>
                     </a>
                 </div>
             </div>
+
             <div class="col-md-4 col-lg-6 text-center">
                 <div class="position-relative ps-4 search-box">
-                    <div class="d-flex border rounded-pill">
-                        <input class="form-control border-0 rounded-pill w-100 py-3" type="text"
-                            data-bs-target="#dropdownToggle123" placeholder="Tìm kiếm sản phẩm...">
-                        <select class="form-select text-dark border-0 border-start rounded-0 p-3" style="width: 200px;">
-                            <option value="Các danh mục">Các danh mục</option>
-                            <option value="Băng keo điện">Băng keo điện</option>
-                            <option value="Băng keo giấy">Băng keo giấy</option>
-                            <option value="Băng keo vải">Băng keo vải</option>
-                            <option value="Giấy ghi chú">Giấy ghi chú</option>
-                            <option value="Giấy in">Giấy in</option>
-                            <option value="Thước bộ">Thước bộ</option>
-                            <option value="Thước gỗ">Thước gỗ</option>
-                            <option value="Thước nhựa">Thước nhựa</option>
-                            <option value="Máy tính">Máy tính</option>
-                            <option value="Bút máy">Bút máy</option>
-                            <option value="Bút chì">Bút chì</option>
+                    <form action="/shop" method="GET" class="d-flex border rounded-pill w-100">
+                        <input class="form-control border-0 rounded-pill w-100 py-3 ps-4" type="text" name="search"
+                            placeholder="Tìm kiếm đồ dùng học tập...">
+                        <select name="category" class="form-select text-dark border-0 border-start rounded-0 p-3"
+                            style="width: 200px;">
+                            <option value="">Tất cả danh mục</option>
+                            <option value="Bút">Bút các loại</option>
+                            <option value="Vở">Sổ tay & Tập vở</option>
+                            <option value="Thước">Thước kẻ</option>
+                            <option value="Băng keo">Băng keo & Hồ dán</option>
+                            <option value="Giấy">Giấy in & Giấy Note</option>
+                            <option value="Máy tính">Máy tính cầm tay</option>
+                            <option value="Khác">Khác</option>
                         </select>
-                        <button type="button" class="btn btn-primary rounded-pill py-3 px-5" style="border: 0;"><i
+                        <button type="submit" class="btn btn-primary rounded-pill py-3 px-5" style="border: 0;"><i
                                 class="fas fa-search"></i></button>
-                    </div>
+                    </form>
                 </div>
             </div>
+
             <div class="col-md-4 col-lg-3 text-center text-lg-end">
                 <div class="d-inline-flex align-items-center">
-                    <a href="#" class="text-muted d-flex align-items-center justify-content-center me-3"><span
-                            class="rounded-circle btn-md-square border"><i class="fas fa-random"></i></i></a>
-                    <a href="#" class="text-muted d-flex align-items-center justify-content-center me-3"><span
-                            class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></a>
-                    <a href="/cart" class="text-muted d-flex align-items-center justify-content-center"><span
-                            class="rounded-circle btn-md-square border"><i class="fas fa-shopping-cart"></i></span>
-                        <span class="text-dark ms-2">Giỏ hàng (<%= cartItemCount || 0 %>)</span></a>
+                    <a href="/cart" class="text-muted d-flex align-items-center justify-content-center">
+                        <span class="rounded-circle btn-md-square border position-relative">
+                            <i class="fas fa-shopping-cart text-primary"></i>
+                            <% if (typeof cartItemCount !=='undefined' && cartItemCount> 0) { %>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="font-size: 0.65rem;">
+                                    <%= cartItemCount %>
+                                </span>
+                                <% } %>
+                        </span>
+                        <span class="text-dark ms-2 fw-bold">Giỏ hàng</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -146,185 +136,62 @@
         <div class="row gx-0 bg-primary px-5 align-items-center">
             <div class="col-lg-3 d-none d-lg-block">
                 <nav class="navbar navbar-light position-relative" style="width: 250px;">
-                    <button class="navbar-toggler border-0 fs-4 w-100 px-0 text-start" type="button"
+                    <button class="navbar-toggler border-0 fs-4 w-100 px-0 text-start text-white" type="button"
                         data-bs-toggle="collapse" data-bs-target="#allCat">
-                        <h4 class="m-0"><i class="fa fa-bars me-2"></i>Tất cả danh mục</h4>
+                        <h4 class="m-0 text-white"><i class="fa fa-bars me-2"></i>Danh mục</h4>
                     </button>
                     <div class="collapse navbar-collapse rounded-bottom" id="allCat">
-                        <div class="navbar-nav ms-auto py-0">
-                            <ul class="list-unstyled categories-bars">
+                        <div class="navbar-nav ms-auto py-0 bg-white border border-top-0 shadow-sm">
+                            <ul class="list-unstyled categories-bars m-0">
+                                <li><a href="/shop?category=Bút" class="dropdown-item py-2"><i
+                                            class="fas fa-pen text-primary me-2"></i>Bút các loại</a></li>
+                                <li><a href="/shop?category=Vở" class="dropdown-item py-2"><i
+                                            class="fas fa-book text-primary me-2"></i>Sổ tay & Tập vở</a></li>
+                                <li><a href="/shop?category=Thước" class="dropdown-item py-2"><i
+                                            class="fas fa-ruler text-primary me-2"></i>Thước kẻ</a></li>
+                                <li><a href="/shop?category=Băng keo" class="dropdown-item py-2"><i
+                                            class="fas fa-tape text-primary me-2"></i>Băng keo & Hồ dán</a></li>
+                                <li><a href="/shop?category=Giấy" class="dropdown-item py-2"><i
+                                            class="fas fa-copy text-primary me-2"></i>Giấy in & Giấy Note</a></li>
+                                <li><a href="/shop?category=Máy tính" class="dropdown-item py-2"><i
+                                            class="fas fa-calculator text-primary me-2"></i>Máy tính cầm tay</a></li>
                                 <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Băng keo điện</a>
-                                        <span>(3)</span>
-                                    </div>
+                                    <hr class="dropdown-divider">
                                 </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Băng keo giấy</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Băng keo vải</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Giấy ghi chú</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Giấy in</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Thước bộ</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Thước gỗ</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Thước nhựa</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Máy tính</a>
-                                        <span>(4)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Bút máy</a>
-                                        <span>(4)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Bút chì</a>
-                                        <span>(4)</span>
-                                    </div>
-                                </li>
+                                <li><a href="/shop" class="dropdown-item py-2 fw-bold text-primary"><i
+                                            class="fas fa-list text-primary me-2"></i>Tất cả sản phẩm</a></li>
                             </ul>
                         </div>
                     </div>
                 </nav>
             </div>
+
             <div class="col-12 col-lg-9">
-                <nav class="navbar navbar-expand-lg navbar-light bg-primary ">
-                    <a href="" class="navbar-brand d-block d-lg-none">
-                        <h1 class="display-5 text-secondary m-0"><i
-                                class="fas fa-shopping-bag text-white me-2"></i>EduStore</h1>
+                <nav class="navbar navbar-expand-lg navbar-dark bg-primary p-0">
+                    <a href="/" class="navbar-brand d-block d-lg-none">
+                        <h1 class="display-5 text-white m-0"><i class="fas fa-book-open me-2"></i>EduStore</h1>
                     </a>
                     <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars fa-1x"></span>
+                        <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="/" class="nav-item nav-link active">Trang chủ</a>
+                            <a href="/" class="nav-item nav-link">Trang chủ</a>
                             <a href="/shop" class="nav-item nav-link">Cửa hàng</a>
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Trang</a>
-                                <div class="dropdown-menu m-0">
-                                    <a href="/bestseller" class="dropdown-item">Bán chạy</a>
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Tiện ích</a>
+                                <div class="dropdown-menu m-0 shadow-sm border-0">
                                     <a href="/cart" class="dropdown-item">Giỏ hàng</a>
                                     <a href="/checkout" class="dropdown-item">Thanh toán</a>
-                                    <a href="/404" class="dropdown-item">Trang 404</a>
                                 </div>
                             </div>
                             <a href="/contact" class="nav-item nav-link me-2">Liên hệ</a>
-                            <div class="nav-item dropdown d-block d-lg-none mb-3">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Các danh
-                                    mục</a>
-                                <div class="dropdown-menu m-0">
-                                    <ul class="list-unstyled categories-bars">
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Băng keo điện</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Băng keo giấy</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Băng keo vải</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Giấy ghi chú</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Giấy in</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Thước bộ</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Thước gỗ</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Thước nhựa</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Máy tính</a>
-                                                <span>(4)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Bút máy</a>
-                                                <span>(4)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="categories-bars-item">
-                                                <a href="#">Bút chì</a>
-                                                <span>(4)</span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
-                        <a href="" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i
-                                class="fa fa-mobile-alt me-2"></i> +84 23 456 7890</a>
+                        <a href="tel:+84793661190"
+                            class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0">
+                            <i class="fa fa-phone-alt me-2"></i> +84 793 661 190
+                        </a>
                     </div>
                 </nav>
             </div>

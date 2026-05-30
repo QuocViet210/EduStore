@@ -1,51 +1,127 @@
 <%- include('partials/header') %>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">
+    <div class="container mt-5 mb-5">
+        <div class="row g-4">
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center py-4">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                            style="width: 80px; height: 80px; font-size: 2rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h5 class="card-title fw-bold text-primary">
                             <%= user.username %>
                         </h5>
-                        <p class="text-muted">
+                        <p class="text-muted mb-2">
                             <%= user.email %>
                         </p>
-                        <p class="badge bg-info">
+                        <span class="badge <%= user.role === 'admin' ? 'bg-danger' : 'bg-info' %> mb-3">
                             <%= user.role==='admin' ? 'Quản Trị Viên' : 'Khách Hàng' %>
-                        </p>
+                        </span>
+
+                        <hr class="my-3">
+
+                        <a href="/api/users/profile/my-orders" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-box-open me-2"></i> Đơn Hàng Của Tôi
+                        </a>
+
+                        <form action="/api/users/auth/logout" method="POST" class="m-0">
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="fas fa-sign-out-alt me-2"></i> Đăng Xuất
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">📋 Thông Tin Cá Nhân</h5>
+            <div class="col-md-8 col-lg-9">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-bottom pb-0 pt-4">
+                        <h5 class="mb-3 fw-bold text-primary"><i class="fas fa-id-card me-2"></i> Thông Tin Cá Nhân</h5>
                     </div>
-                    <div class="card-body">
-                        <p><strong>Tên Đăng Nhập:</strong>
-                            <%= user.username %>
-                        </p>
-                        <p><strong>Email:</strong>
-                            <%= user.email %>
-                        </p>
-                        <p><strong>Số Điện Thoại:</strong>
-                            <%= user.phone || 'Chưa cập nhật' %>
-                        </p>
-                        <p><strong>Địa Chỉ:</strong>
-                            <%= user.address || 'Chưa cập nhật' %>
-                        </p>
-                        <p><strong>Tham Gia Từ:</strong>
-                            <%= new Date(user.createdAt).toLocaleDateString('vi-VN') %>
-                        </p>
+                    <div class="card-body p-4">
+                        <form id="profileForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Tên Hiển Thị</label>
+                                    <input type="text" class="form-control" id="username" value="<%= user.username %>"
+                                        required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Email (Không thể đổi)</label>
+                                    <input type="email" class="form-control bg-light" value="<%= user.email %>"
+                                        readonly>
+                                </div>
+                            </div>
 
-                        <a href="/users/change-password" class="btn btn-warning">🔑 Đổi Mật Khẩu</a>
-                        <a href="/api/users/auth/logout" class="btn btn-danger">🚪 Đăng Xuất</a>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Số Điện Thoại</label>
+                                    <input type="text" class="form-control" id="phone" value="<%= user.phone || '' %>"
+                                        placeholder="Nhập số điện thoại nhận hàng...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Địa Chỉ Nhận Hàng</label>
+                                    <input type="text" class="form-control" id="address"
+                                        value="<%= user.address || '' %>" placeholder="Ví dụ: 123 Lê Lợi, Quận 1...">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <button type="button" class="btn btn-warning"
+                                    onclick="alert('Tính năng đổi mật khẩu đang được bảo trì.')">
+                                    <i class="fas fa-key me-1"></i> Đổi Mật Khẩu
+                                </button>
+
+                                <button type="submit" class="btn btn-success px-4 py-2" id="btnSaveProfile">
+                                    <i class="fas fa-save me-2"></i> Lưu Thay Đổi
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Chặn tải lại trang tự động
+
+            const btn = document.getElementById('btnSaveProfile');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang lưu...';
+            btn.disabled = true;
+
+            const data = {
+                username: document.getElementById('username').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value
+            };
+
+            try {
+                // Đảm bảo URL này khớp với Route em đã khai báo trong userRoutes.js
+                const response = await fetch('/api/users/profile/update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('🎉 Cập nhật thông tin thành công!');
+                    window.location.reload(); // Load lại trang để cập nhật giao diện
+                } else {
+                    alert('❌ Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Lỗi API:', error);
+                alert('Có lỗi xảy ra khi kết nối đến máy chủ!');
+            } finally {
+                btn.innerHTML = '<i class="fas fa-save me-2"></i> Lưu Thay Đổi';
+                btn.disabled = false;
+            }
+        });
+    </script>
 
     <%- include('partials/footer') %>

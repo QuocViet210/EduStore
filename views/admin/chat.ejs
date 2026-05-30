@@ -1,0 +1,65 @@
+<%- include('partials/header') %>
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Hỗ trợ /</span> Live Chat</h4>
+
+        <div class="card shadow-sm" style="height: 600px; display: flex; flex-direction: column;">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
+                <h5 class="m-0 text-white"><i class="fas fa-headset me-2"></i> Trạm Trực Hỗ Trợ Khách Hàng</h5>
+                <span class="badge bg-success ms-auto">Online</span>
+            </div>
+
+            <div class="card-body p-4" id="chat-box" style="overflow-y: auto; flex-grow: 1; background-color: #f8f9fa;">
+                <div class="text-center text-muted small mb-3">Hệ thống chat đã sẵn sàng. Hãy chào khách hàng!</div>
+                <ul id="messages" class="list-unstyled m-0"></ul>
+            </div>
+
+            <div class="card-footer bg-white border-top">
+                <form id="chat-form" class="d-flex">
+                    <input type="text" id="chat-input" class="form-control me-2" placeholder="Nhập câu trả lời..."
+                        autocomplete="off" required>
+                    <button type="submit" class="btn btn-primary px-4"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io(); // Kết nối lên server
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('chat-input');
+        const messages = document.getElementById('messages');
+        const chatBox = document.getElementById('chat-box');
+
+        // Admin là người gửi
+        const adminName = "<%= user.username %> (Admin)";
+
+        // Khi gõ tin và bấm Gửi
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) {
+                // Phát sự kiện lên server
+                socket.emit('send_message', { sender: adminName, message: input.value, role: 'admin' });
+                input.value = '';
+            }
+        });
+
+        // Khi Server báo có tin nhắn mới
+        socket.on('receive_message', function (data) {
+            const li = document.createElement('li');
+            li.className = 'mb-3 d-flex flex-column';
+
+            // Phân biệt màu sắc: Admin màu xanh bên phải, Khách màu xám bên trái
+            if (data.role === 'admin') {
+                li.innerHTML = `<div class="align-self-end text-end"><small class="text-muted">${data.sender}</small><div class="bg-primary text-white p-2 rounded-3 mt-1 d-inline-block shadow-sm">${data.message}</div></div>`;
+            } else {
+                li.innerHTML = `<div class="align-self-start"><small class="text-muted fw-bold">${data.sender}</small><div class="bg-white border p-2 rounded-3 mt-1 d-inline-block shadow-sm">${data.message}</div></div>`;
+            }
+
+            messages.appendChild(li);
+            chatBox.scrollTop = chatBox.scrollHeight; // Tự cuộn xuống dưới cùng
+        });
+    </script>
+
+    <%- include('partials/footer') %>

@@ -35,8 +35,8 @@ router.get('/profile/me', auth, userController.getCurrentUser);
  * Cập nhật thông tin cá nhân
  * PUT /api/users/profile/me
  */
-router.put('/profile/me', auth, validateUpdateUser, userController.updateUser);
-
+router.put('/profile/update', auth, userController.updateMyProfile);
+router.get('/profile/my-orders', auth, userController.getMyOrdersPage);
 /**
  * Đổi mật khẩu
  * PUT /api/users/profile/change-password

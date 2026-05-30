@@ -7,6 +7,15 @@ const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
 
+const http = require('http');
+const { Server } = require("socket.io");
+
+const app = express();
+
+// 🌟 TẠO SERVER HTTP TỪ APP EXPRESS
+const server = http.createServer(app);
+const io = new Server(server);
+
 // Import config
 const connectDB = require('./config/database');
 
@@ -16,7 +25,7 @@ const errorHandler = require('./middleware/errorHandler');
 // Import models
 const Product = require('./models/Product');
 
-const app = express();
+//const app = express();
 
 // ✅ 1. CẤU HÌNH VIEW ENGINE (EJS)
 app.set('view engine', 'ejs');
@@ -73,8 +82,30 @@ app.use((req, res) => {
 // ✅ 9. MIDDLEWARE XỬ LÝ LỖI TOÀN CỤC
 app.use(errorHandler);
 
-// ✅ 10. KHỞI CHẠY SERVER
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+// Khối xử lý Real-time (Socket.IO)
+io.on('connection', (socket) => {
+    console.log('⚡ Một người dùng đã kết nối Chat:', socket.id);
+
+    // Lắng nghe sự kiện 'send_message' từ Client gửi lên
+    socket.on('send_message', (data) => {
+        // Phát sự kiện 'receive_message' kèm dữ liệu cho TẤT CẢ mọi người
+        io.emit('receive_message', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('❌ Một người dùng đã ngắt kết nối');
+    });
 });
+
+// 🌟 THAY app.listen BẰNG server.listen
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`🚀 Server đang chạy tại: http://localhost:${PORT}`);
+    console.log(`💬 Hệ thống Live Chat đã sẵn sàng!`);
+});
+
+// ✅ 10. KHỞI CHẠY SERVER
+//const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//     console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+// });

@@ -7,7 +7,7 @@
             <div class="card-header border-bottom">
                 <form method="GET" class="d-flex w-50">
                     <input type="text" name="search" class="form-control me-2" placeholder="Tìm email hoặc tên..."
-                        value="<%= search %>">
+                        value="<%= typeof search !== 'undefined' ? search : '' %>">
                     <button type="submit" class="btn btn-outline-primary"><i class="bx bx-search"></i></button>
                 </form>
             </div>
@@ -43,19 +43,26 @@
                                             <%= u.role==='admin' ? 'Quản trị viên' : 'Khách hàng' %>
                                         </span>
                                     </td>
+
                                     <td>
-                                        <span class="badge <%= u.isActive ? 'bg-success' : 'bg-secondary' %>">
-                                            <%= u.isActive ? 'Hoạt động' : 'Đã khóa' %>
+                                        <span id="status-badge-<%= u._id %>"
+                                            class="badge <%= u.isActive ? 'bg-success' : 'bg-danger' %>">
+                                            <%= u.isActive ? 'Hoạt động' : 'Bị khóa' %>
                                         </span>
                                     </td>
+
                                     <td>
                                         <% if (u.role !=='admin' ) { %>
-                                            <form action="/api/users/<%= u._id %>?_method=DELETE" method="POST"
-                                                onsubmit="return confirm('Khóa tài khoản này?');">
-                                                <button type="submit"
-                                                    class="btn btn-sm btn-outline-danger">Khóa</button>
-                                            </form>
-                                            <% } %>
+                                            <button onclick="toggleStatus('<%= u._id %>')"
+                                                class="btn btn-sm <%= u.isActive ? 'btn-outline-danger' : 'btn-outline-success' %>"
+                                                id="btn-toggle-<%= u._id %>">
+                                                <i
+                                                    class='bx <%= u.isActive ? "bx-lock-alt" : "bx-lock-open-alt" %>'></i>
+                                                <%= u.isActive ? 'Khóa' : 'Mở khóa' %>
+                                            </button>
+                                            <% } else { %>
+                                                <span class="text-muted small">Không thể khóa Admin</span>
+                                                <% } %>
                                     </td>
                                 </tr>
                                 <% }); %>
@@ -69,5 +76,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        async function toggleStatus(userId) {
+            // Hỏi lại cho chắc
+            if (!confirm('Bạn có chắc chắn muốn thay đổi trạng thái của tài khoản này không?')) return;
+
+            try {
+                // Gọi API lật trạng thái (Nhớ phải có Route PATCH bên file adminRoutes.js nhé)
+                const response = await fetch(`/admin/users/toggle-status/${userId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // DOM: Lấy 2 phần tử cần đổi màu
+                    const badge = document.getElementById(`status-badge-${userId}`);
+                    const btn = document.getElementById(`btn-toggle-${userId}`);
+
+                    // Thay đổi Giao diện Dựa trên trạng thái MỚI vừa nhận từ Server
+                    if (data.isActive) {
+                        // Nếu tài khoản đang mở
+                        badge.className = 'badge bg-success';
+                        badge.innerText = 'Hoạt động';
+
+                        btn.className = 'btn btn-sm btn-outline-danger';
+                        btn.innerHTML = '<i class="bx bx-lock-alt"></i> Khóa';
+                    } else {
+                        // Nếu tài khoản vừa bị khóa
+                        badge.className = 'badge bg-danger';
+                        badge.innerText = 'Bị khóa';
+
+                        btn.className = 'btn btn-sm btn-outline-success';
+                        btn.innerHTML = '<i class="bx bx-lock-open-alt"></i> Mở khóa';
+                    }
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Đã xảy ra lỗi khi kết nối với máy chủ!');
+            }
+        }
+    </script>
 
     <%- include('partials/footer') %>
