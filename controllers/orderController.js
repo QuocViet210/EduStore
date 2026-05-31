@@ -4,7 +4,7 @@ const User = require('../models/User');
 const { sendSuccess, sendError, getPagination } = require('../utils/responseHandler');
 
 /**
- * ✅ CREATE: Tạo đơn hàng mới
+ * CREATE: Tạo đơn hàng mới
  * POST /api/orders
  */
 exports.createOrder = async (req, res) => {
@@ -12,7 +12,7 @@ exports.createOrder = async (req, res) => {
         const { items, shippingAddress } = req.body;
         const userId = req.session.user._id;
 
-        // 1️⃣ Kiểm tra dữ liệu
+        // Kiểm tra dữ liệu
         if (!items || !Array.isArray(items) || items.length === 0) {
             return sendError(res, 'Đơn hàng phải có ít nhất 1 sản phẩm', 400);
         }
@@ -21,7 +21,7 @@ exports.createOrder = async (req, res) => {
             return sendError(res, 'Vui lòng cung cấp địa chỉ giao hàng đầy đủ', 400);
         }
 
-        // 2️⃣ Kiểm tra sản phẩm & tính tổng tiền
+        // Kiểm tra sản phẩm & tính tổng tiền
         let totalPrice = 0;
         const orderItems = [];
 
@@ -55,7 +55,7 @@ exports.createOrder = async (req, res) => {
             await product.save();
         }
 
-        // 3️⃣ Tạo đơn hàng
+        // Tạo đơn hàng
         const order = new Order({
             userId,
             items: orderItems,
@@ -67,17 +67,17 @@ exports.createOrder = async (req, res) => {
 
         await order.save();
 
-        console.log(`✅ Tạo đơn hàng thành công: ${order._id}`);
+        console.log(`Tạo đơn hàng thành công: ${order._id}`);
         sendSuccess(res, order, 'Tạo đơn hàng thành công', 201);
 
     } catch (error) {
-        console.error('❌ Error in createOrder:', error);
+        console.error('Error in createOrder:', error);
         sendError(res, 'Lỗi khi tạo đơn hàng', 500);
     }
 };
 
 /**
- * ✅ READ: Lấy đơn hàng của người dùng hiện tại
+ * READ: Lấy đơn hàng của người dùng hiện tại
  * GET /api/orders/my-orders
  */
 exports.getMyOrders = async (req, res) => {
@@ -110,13 +110,13 @@ exports.getMyOrders = async (req, res) => {
         }, 'Lấy danh sách đơn hàng thành công');
 
     } catch (error) {
-        console.error('❌ Error in getMyOrders:', error);
+        console.error('Error in getMyOrders:', error);
         sendError(res, 'Lỗi khi lấy danh sách đơn hàng', 500);
     }
 };
 
 /**
- * ✅ READ: Lấy tất cả đơn hàng - Admin API
+ * READ: Lấy tất cả đơn hàng - Admin API
  * GET /api/orders
  */
 exports.getAllOrders = async (req, res) => {
@@ -155,13 +155,13 @@ exports.getAllOrders = async (req, res) => {
         }, 'Lấy danh sách đơn hàng thành công');
 
     } catch (error) {
-        console.error('❌ Error in getAllOrders:', error);
+        console.error('Error in getAllOrders:', error);
         sendError(res, 'Lỗi khi lấy danh sách đơn hàng', 500);
     }
 };
 
 /**
- * ✅ READ: Lấy chi tiết đơn hàng
+ * READ: Lấy chi tiết đơn hàng
  * GET /api/orders/:id
  */
 exports.getOrderDetail = async (req, res) => {
@@ -182,13 +182,13 @@ exports.getOrderDetail = async (req, res) => {
         sendSuccess(res, order, 'Lấy chi tiết đơn hàng thành công');
 
     } catch (error) {
-        console.error('❌ Error in getOrderDetail:', error);
+        console.error('Error in getOrderDetail:', error);
         sendError(res, 'Lỗi khi lấy chi tiết đơn hàng', 500);
     }
 };
 
 /**
- * ✅ UPDATE: Cập nhật trạng thái đơn hàng - Admin API
+ * UPDATE: Cập nhật trạng thái đơn hàng - Admin API
  * PUT /api/orders/:id/status
  */
 exports.updateOrderStatus = async (req, res) => {
@@ -219,17 +219,17 @@ exports.updateOrderStatus = async (req, res) => {
 
         await order.save();
 
-        console.log(`✅ Cập nhật trạng thái đơn hàng: ${order._id} -> ${status}`);
+        console.log(`Cập nhật trạng thái đơn hàng: ${order._id} -> ${status}`);
         sendSuccess(res, order, 'Cập nhật trạng thái đơn hàng thành công');
 
     } catch (error) {
-        console.error('❌ Error in updateOrderStatus:', error);
+        console.error('Error in updateOrderStatus:', error);
         sendError(res, 'Lỗi khi cập nhật trạng thái đơn hàng', 500);
     }
 };
 
 /**
- * ✅ UPDATE: Cập nhật ghi chú đơn hàng
+ * UPDATE: Cập nhật ghi chú đơn hàng
  * PUT /api/orders/:id/notes
  */
 exports.updateOrderNotes = async (req, res) => {
@@ -245,17 +245,17 @@ exports.updateOrderNotes = async (req, res) => {
         order.notes = notes?.trim() || '';
         await order.save();
 
-        console.log(`✅ Cập nhật ghi chú đơn hàng: ${order._id}`);
+        console.log(`Cập nhật ghi chú đơn hàng: ${order._id}`);
         sendSuccess(res, order, 'Cập nhật ghi chú thành công');
 
     } catch (error) {
-        console.error('❌ Error in updateOrderNotes:', error);
+        console.error('Error in updateOrderNotes:', error);
         sendError(res, 'Lỗi khi cập nhật ghi chú', 500);
     }
 };
 
 /**
- * ✅ DELETE: Hủy đơn hàng
+ * DELETE: Hủy đơn hàng
  * DELETE /api/orders/:id
  */
 exports.cancelOrder = async (req, res) => {
@@ -284,17 +284,17 @@ exports.cancelOrder = async (req, res) => {
         order.status = 'cancelled';
         await order.save();
 
-        console.log(`✅ Hủy đơn hàng: ${order._id}`);
+        console.log(`Hủy đơn hàng: ${order._id}`);
         sendSuccess(res, order, 'Hủy đơn hàng thành công');
 
     } catch (error) {
-        console.error('❌ Error in cancelOrder:', error);
+        console.error('Error in cancelOrder:', error);
         sendError(res, 'Lỗi khi hủy đơn hàng', 500);
     }
 };
 
 /**
- * 📊 BONUS: Lấy thống kê đơn hàng - Admin API
+ * BONUS: Lấy thống kê đơn hàng - Admin API
  * GET /api/orders/stats
  */
 exports.getOrderStats = async (req, res) => {
@@ -319,7 +319,7 @@ exports.getOrderStats = async (req, res) => {
         sendSuccess(res, stats, 'Lấy thống kê đơn hàng thành công');
 
     } catch (error) {
-        console.error('❌ Error in getOrderStats:', error);
+        console.error('Error in getOrderStats:', error);
         sendError(res, 'Lỗi khi lấy thống kê', 500);
     }
 };

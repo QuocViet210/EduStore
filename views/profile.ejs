@@ -109,10 +109,10 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('🎉 Cập nhật thông tin thành công!');
+                    alert('Cập nhật thông tin thành công!');
                     window.location.reload(); // Load lại trang để cập nhật giao diện
                 } else {
-                    alert('❌ Lỗi: ' + result.message);
+                    alert('Lỗi: ' + result.message);
                 }
             } catch (error) {
                 console.error('Lỗi API:', error);

@@ -22,7 +22,7 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 /**
- * ✅ Validators cho SẢN PHẨM
+ * Validators cho SẢN PHẨM
  */
 const validateProduct = [
     body('name')
@@ -44,7 +44,7 @@ const validateProduct = [
 ];
 
 /**
- * ✅ Validators cho ĐĂNG KÝ
+ * Validators cho ĐĂNG KÝ
  */
 const validateRegister = [
     body('username')
@@ -71,7 +71,7 @@ const validateRegister = [
 ];
 
 /**
- * ✅ Validators cho ĐĂNG NHẬP
+ * Validators cho ĐĂNG NHẬP
  */
 const validateLogin = [
     body('email')
@@ -85,7 +85,7 @@ const validateLogin = [
 ];
 
 /**
- * ✅ Validators cho CẬP NHẬT THÔNG TIN NGƯỜI DÙNG
+ * Validators cho CẬP NHẬT THÔNG TIN NGƯỜI DÙNG
  */
 const validateUpdateUser = [
     body('username')
@@ -113,7 +113,7 @@ const validateUpdateUser = [
 ];
 
 /**
- * ✅ Validators cho ĐỔI MẬT KHẨU
+ * Validators cho ĐỔI MẬT KHẨU
  */
 const validateChangePassword = [
     body('oldPassword')
@@ -136,7 +136,7 @@ const validateChangePassword = [
 ];
 
 /**
- * ✅ Validators cho TẠO ĐƠN HÀNG
+ * Validators cho TẠO ĐƠN HÀNG
  */
 const validateCreateOrder = [
     body('items')
@@ -167,7 +167,7 @@ const validateCreateOrder = [
 ];
 
 /**
- * ✅ Validators cho CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG
+ * Validators cho CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG
  */
 const validateUpdateOrderStatus = [
     body('status')

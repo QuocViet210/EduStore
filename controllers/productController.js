@@ -12,7 +12,7 @@ const deleteOldImage = (imagePath) => {
     const fullPath = path.join(__dirname, '../public', imagePath);
     if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
-        console.log(`✅ Xóa ảnh cũ: ${imagePath}`);
+        console.log(`Xóa ảnh cũ: ${imagePath}`);
     }
 };
 
@@ -34,7 +34,7 @@ exports.getAllProducts = async (req, res) => {
             cartItemCount
         });
     } catch (error) {
-        console.error('❌ Error in getAllProducts:', error);
+        console.error('Error in getAllProducts:', error);
         res.status(500).send('Lỗi Server!');
     }
 };
@@ -76,7 +76,7 @@ exports.getProductsAPI = async (req, res) => {
             }
         }, 'Lấy danh sách sản phẩm thành công');
     } catch (error) {
-        console.error('❌ Error in getProductsAPI:', error);
+        console.error('Error in getProductsAPI:', error);
         sendError(res, 'Lỗi khi lấy danh sách sản phẩm', 500);
     }
 };
@@ -142,7 +142,7 @@ exports.getProductDetail = async (req, res) => {
         }
         res.render('product-detail', { product });
     } catch (error) {
-        console.error('❌ Error in getProductDetail:', error);
+        console.error('Error in getProductDetail:', error);
         res.status(500).send('Lỗi Server!');
     }
 };
@@ -158,13 +158,13 @@ exports.getProductDetailAPI = async (req, res) => {
         }
         sendSuccess(res, product, 'Lấy thông tin sản phẩm thành công');
     } catch (error) {
-        console.error('❌ Error in getProductDetailAPI:', error);
+        console.error('Error in getProductDetailAPI:', error);
         sendError(res, 'Lỗi khi lấy chi tiết sản phẩm', 500);
     }
 };
 
 /**
- * ✅ CREATE: Tạo sản phẩm mới - Admin API (với upload ảnh)
+ * CREATE: Tạo sản phẩm mới - Admin API (với upload ảnh)
  * 
  * POST /api/products
  * Body: {sku, name, price, stock, category, description}
@@ -174,24 +174,24 @@ exports.createProduct = async (req, res) => {
     try {
         const { sku, name, price, stock, category, description } = req.body;
 
-        // 1️⃣ Kiểm tra dữ liệu bắt buộc
+        // Kiểm tra dữ liệu bắt buộc
         if (!sku || !name || !price || !category) {
             return sendError(res, 'SKU, tên, giá và danh mục không được để trống', 400);
         }
 
-        // 2️⃣ Kiểm tra SKU trùng
+        // Kiểm tra SKU trùng
         const existingSKU = await Product.findOne({ sku: sku.toUpperCase() });
         if (existingSKU) {
             return sendError(res, `SKU "${sku}" đã tồn tại`, 400);
         }
 
-        // 3️⃣ Xử lý ảnh upload
+        // Xử lý ảnh upload
         let imageUrl = '/img/default-product.png';
         if (req.file) {
             imageUrl = `/uploads/products/${req.file.filename}`;
         }
 
-        // 4️⃣ Tạo sản phẩm mới
+        // Tạo sản phẩm mới
         const product = new Product({
             sku: sku.toUpperCase(),
             name: name.trim(),
@@ -205,7 +205,7 @@ exports.createProduct = async (req, res) => {
 
         await product.save();
 
-        console.log(`✅ Tạo sản phẩm thành công: ${name} (SKU: ${sku})`);
+        console.log(`Tạo sản phẩm thành công: ${name} (SKU: ${sku})`);
         sendSuccess(res, product, 'Tạo sản phẩm thành công', 201);
 
     } catch (error) {
@@ -213,13 +213,13 @@ exports.createProduct = async (req, res) => {
         if (req.file) {
             fs.unlinkSync(req.file.path);
         }
-        console.error('❌ Error in createProduct:', error);
+        console.error('Error in createProduct:', error);
         sendError(res, error.message || 'Lỗi khi tạo sản phẩm', 500);
     }
 };
 
 /**
- * ✅ UPDATE: Cập nhật sản phẩm - Admin API (với xử lý ảnh)
+ * UPDATE: Cập nhật sản phẩm - Admin API (với xử lý ảnh)
  * 
  * PUT /api/products/:id
  * Body: {name, price, stock, category, description}
@@ -230,14 +230,14 @@ exports.updateProduct = async (req, res) => {
         const { id } = req.params;
         const { name, price, stock, category, description } = req.body;
 
-        // 1️⃣ Tìm sản phẩm cũ
+        // Tìm sản phẩm cũ
         const product = await Product.findById(id);
         if (!product) {
             if (req.file) fs.unlinkSync(req.file.path);
             return sendError(res, 'Sản phẩm không tồn tại', 404);
         }
 
-        // 2️⃣ Chuẩn bị dữ liệu cập nhật
+        // Chuẩn bị dữ liệu cập nhật
         const updateData = {};
 
         if (name) updateData.name = name.trim();
@@ -246,28 +246,28 @@ exports.updateProduct = async (req, res) => {
         if (category) updateData.category = category;
         if (description !== undefined) updateData.description = description.trim();
 
-        // 3️⃣ Xử lý ảnh mới
+        // Xử lý ảnh mới
         if (req.file) {
             // Xóa ảnh cũ nếu có
             deleteOldImage(product.imageUrl);
             updateData.imageUrl = `/uploads/products/${req.file.filename}`;
         }
 
-        // 4️⃣ Cập nhật sản phẩm
+        // Cập nhật sản phẩm
         const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
 
-        console.log(`✅ Cập nhật sản phẩm thành công: ${updatedProduct.name}`);
+        console.log(`Cập nhật sản phẩm thành công: ${updatedProduct.name}`);
         sendSuccess(res, updatedProduct, 'Cập nhật sản phẩm thành công');
 
     } catch (error) {
         if (req.file) fs.unlinkSync(req.file.path);
-        console.error('❌ Error in updateProduct:', error);
+        console.error('Error in updateProduct:', error);
         sendError(res, 'Lỗi khi cập nhật sản phẩm', 500);
     }
 };
 
 /**
- * ✅ DELETE: Xóa sản phẩm - Admin API (Soft delete)
+ * DELETE: Xóa sản phẩm - Admin API (Soft delete)
  * 
  * DELETE /api/products/:id
  * Chỉ đánh dấu isActive = false (không xóa vĩnh viễn)
@@ -285,11 +285,11 @@ exports.deleteProduct = async (req, res) => {
         product.isActive = false;
         await product.save();
 
-        console.log(`✅ Xóa sản phẩm (ẩn): ${product.name}`);
+        console.log(`Xóa sản phẩm (ẩn): ${product.name}`);
         sendSuccess(res, product, 'Xóa sản phẩm thành công');
 
     } catch (error) {
-        console.error('❌ Error in deleteProduct:', error);
+        console.error('Error in deleteProduct:', error);
         sendError(res, 'Lỗi khi xóa sản phẩm', 500);
     }
 };
@@ -324,7 +324,7 @@ exports.restoreProduct = async (req, res) => {
  * BONUS: Xóa vĩnh viễn sản phẩm + ảnh - Admin API
  * 
  * DELETE /api/products/:id/permanent
- * ⚠️ Không thể khôi phục!
+ * Không thể khôi phục!
  */
 exports.hardDeleteProduct = async (req, res) => {
     try {
@@ -341,11 +341,11 @@ exports.hardDeleteProduct = async (req, res) => {
         // Xóa vĩnh viễn từ DB
         await Product.findByIdAndDelete(id);
 
-        console.log(`✅ Xóa vĩnh viễn sản phẩm: ${product.name}`);
+        console.log(`Xóa vĩnh viễn sản phẩm: ${product.name}`);
         sendSuccess(res, null, 'Xóa sản phẩm vĩnh viễn thành công');
 
     } catch (error) {
-        console.error('❌ Error in hardDeleteProduct:', error);
+        console.error('Error in hardDeleteProduct:', error);
         sendError(res, 'Lỗi khi xóa sản phẩm vĩnh viễn', 500);
     }
 };

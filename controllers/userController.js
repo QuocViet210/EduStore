@@ -11,7 +11,7 @@ const hashPassword = (password) => {
 };
 
 /**
- * ✅ READ: Lấy danh sách người dùng - Admin API
+ *  READ: Lấy danh sách người dùng - Admin API
  * GET /api/users
  */
 exports.getAllUsers = async (req, res) => {
@@ -50,13 +50,13 @@ exports.getAllUsers = async (req, res) => {
         }, 'Lấy danh sách người dùng thành công');
 
     } catch (error) {
-        console.error('❌ Error in getAllUsers:', error);
+        console.error(' Error in getAllUsers:', error);
         sendError(res, 'Lỗi khi lấy danh sách người dùng', 500);
     }
 };
 
 /**
- * ✅ READ: Lấy chi tiết người dùng
+ *  READ: Lấy chi tiết người dùng
  * GET /api/users/:id
  */
 exports.getUserById = async (req, res) => {
@@ -70,13 +70,13 @@ exports.getUserById = async (req, res) => {
         sendSuccess(res, user, 'Lấy thông tin người dùng thành công');
 
     } catch (error) {
-        console.error('❌ Error in getUserById:', error);
+        console.error(' Error in getUserById:', error);
         sendError(res, 'Lỗi khi lấy thông tin người dùng', 500);
     }
 };
 
 /**
- * ✅ READ: Lấy thông tin người dùng hiện tại
+ *  READ: Lấy thông tin người dùng hiện tại
  * GET /api/users/profile/me
  */
 exports.getCurrentUser = async (req, res) => {
@@ -90,13 +90,13 @@ exports.getCurrentUser = async (req, res) => {
         sendSuccess(res, user, 'Lấy thông tin cá nhân thành công');
 
     } catch (error) {
-        console.error('❌ Error in getCurrentUser:', error);
+        console.error(' Error in getCurrentUser:', error);
         sendError(res, 'Lỗi khi lấy thông tin cá nhân', 500);
     }
 };
 
 /**
- * ✅ UPDATE: Cập nhật thông tin người dùng
+ *  UPDATE: Cập nhật thông tin người dùng
  * PUT /api/users/:id
  */
 exports.updateUser = async (req, res) => {
@@ -135,17 +135,17 @@ exports.updateUser = async (req, res) => {
 
         const updatedUser = await User.findById(id).select('-password');
 
-        console.log(`✅ Cập nhật người dùng: ${updatedUser.username}`);
+        console.log(` Cập nhật người dùng: ${updatedUser.username}`);
         sendSuccess(res, updatedUser, 'Cập nhật thông tin thành công');
 
     } catch (error) {
-        console.error('❌ Error in updateUser:', error);
+        console.error(' Error in updateUser:', error);
         sendError(res, 'Lỗi khi cập nhật thông tin người dùng', 500);
     }
 };
 
 /**
- * ✅ UPDATE: Đổi mật khẩu
+ *  UPDATE: Đổi mật khẩu
  * PUT /api/users/:id/change-password
  */
 exports.changePassword = async (req, res) => {
@@ -182,17 +182,17 @@ exports.changePassword = async (req, res) => {
         user.password = hashPassword(newPassword);
         await user.save();
 
-        console.log(`✅ Đổi mật khẩu: ${user.username}`);
+        console.log(`Đổi mật khẩu: ${user.username}`);
         sendSuccess(res, null, 'Đổi mật khẩu thành công');
 
     } catch (error) {
-        console.error('❌ Error in changePassword:', error);
+        console.error(' Error in changePassword:', error);
         sendError(res, 'Lỗi khi đổi mật khẩu', 500);
     }
 };
 
 /**
- * ✅ DELETE: Xóa người dùng - Admin API (Soft delete)
+ *  DELETE: Xóa người dùng - Admin API (Soft delete)
  * DELETE /api/users/:id
  */
 exports.deleteUser = async (req, res) => {
@@ -213,17 +213,17 @@ exports.deleteUser = async (req, res) => {
         user.isActive = false;
         await user.save();
 
-        console.log(`✅ Xóa người dùng (ẩn): ${user.username}`);
+        console.log(` Xóa người dùng (ẩn): ${user.username}`);
         sendSuccess(res, user, 'Xóa người dùng thành công');
 
     } catch (error) {
-        console.error('❌ Error in deleteUser:', error);
+        console.error(' Error in deleteUser:', error);
         sendError(res, 'Lỗi khi xóa người dùng', 500);
     }
 };
 
 /**
- * ✅ RESTORE: Khôi phục người dùng bị xóa
+ *  RESTORE: Khôi phục người dùng bị xóa
  * PATCH /api/users/:id/restore
  */
 exports.restoreUser = async (req, res) => {
@@ -238,24 +238,24 @@ exports.restoreUser = async (req, res) => {
         user.isActive = true;
         await user.save();
 
-        console.log(`✅ Khôi phục người dùng: ${user.username}`);
+        console.log(` Khôi phục người dùng: ${user.username}`);
         sendSuccess(res, user, 'Khôi phục người dùng thành công');
 
     } catch (error) {
-        console.error('❌ Error in restoreUser:', error);
+        console.error(' Error in restoreUser:', error);
         sendError(res, 'Lỗi khi khôi phục người dùng', 500);
     }
 };
 
 /**
- * 🔒 AUTHENTICATION: Đăng ký tài khoản mới
+ *  AUTHENTICATION: Đăng ký tài khoản mới
  * POST /api/auth/register
  */
 exports.register = async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
 
-        // 1️⃣ Kiểm tra dữ liệu
+        //  Kiểm tra dữ liệu
         if (!username || !email || !password || !confirmPassword) {
             return sendError(res, 'Vui lòng nhập đầy đủ thông tin', 400);
         }
@@ -268,7 +268,7 @@ exports.register = async (req, res) => {
             return sendError(res, 'Mật khẩu phải ít nhất 6 ký tự', 400);
         }
 
-        // 2️⃣ Kiểm tra email/username trùng
+        //  Kiểm tra email/username trùng
         const existingEmail = await User.findOne({ email: email.toLowerCase() });
         if (existingEmail) {
             return sendError(res, 'Email này đã được đăng ký', 400);
@@ -279,7 +279,7 @@ exports.register = async (req, res) => {
             return sendError(res, 'Username này đã được sử dụng', 400);
         }
 
-        // 3️⃣ Tạo user mới
+        //  Tạo user mới
         const newUser = new User({
             username: username.trim(),
             email: email.toLowerCase().trim(),
@@ -289,7 +289,7 @@ exports.register = async (req, res) => {
 
         await newUser.save();
 
-        // 4️⃣ Tạo session
+        //  Tạo session
         req.session.user = {
             _id: newUser._id,
             username: newUser.username,
@@ -299,46 +299,46 @@ exports.register = async (req, res) => {
 
         const userResponse = await User.findById(newUser._id).select('-password');
 
-        console.log(`✅ Đăng ký thành công: ${newUser.username}`);
+        console.log(` Đăng ký thành công: ${newUser.username}`);
         sendSuccess(res, userResponse, 'Đăng ký thành công', 201);
 
     } catch (error) {
-        console.error('❌ Error in register:', error);
+        console.error(' Error in register:', error);
         sendError(res, error.message || 'Lỗi khi đăng ký', 500);
     }
 };
 
 /**
- * 🔒 AUTHENTICATION: Đăng nhập
+ *  AUTHENTICATION: Đăng nhập
  * POST /api/auth/login
  */
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // 1️⃣ Kiểm tra dữ liệu
+        //  Kiểm tra dữ liệu
         if (!email || !password) {
             return sendError(res, 'Vui lòng nhập email và mật khẩu', 400);
         }
 
-        // 2️⃣ Tìm user theo email
+        //Tìm user theo email
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return sendError(res, 'Email hoặc mật khẩu không chính xác', 400);
         }
 
-        // 3️⃣ Kiểm tra mật khẩu
+        // Kiểm tra mật khẩu
         const passwordHash = hashPassword(password);
         if (user.password !== passwordHash) {
             return sendError(res, 'Email hoặc mật khẩu không chính xác', 400);
         }
 
-        // 4️⃣ Kiểm tra tài khoản có active không
+        //  Kiểm tra tài khoản có active không
         if (!user.isActive) {
             return sendError(res, 'Tài khoản này đã bị vô hiệu hóa', 403);
         }
 
-        // 5️⃣ Tạo session
+        //  Tạo session
         req.session.user = {
             _id: user._id,
             username: user.username,
@@ -348,17 +348,17 @@ exports.login = async (req, res) => {
 
         const userResponse = await User.findById(user._id).select('-password');
 
-        console.log(`✅ Đăng nhập thành công: ${user.username}`);
+        console.log(`Đăng nhập thành công: ${user.username}`);
         sendSuccess(res, userResponse, 'Đăng nhập thành công');
 
     } catch (error) {
-        console.error('❌ Error in login:', error);
+        console.error('Error in login:', error);
         sendError(res, 'Lỗi khi đăng nhập', 500);
     }
 };
 
 /**
- * 🔒 AUTHENTICATION: Đăng xuất
+ * AUTHENTICATION: Đăng xuất
  * POST /api/auth/logout
  */
 /**
@@ -434,7 +434,7 @@ exports.getChangePasswordPage = (req, res) => {
 };
 
 /**
- * 🔒 RENDER/API: Người dùng tự cập nhật thông tin cá nhân của mình
+ * RENDER/API: Người dùng tự cập nhật thông tin cá nhân của mình
  * PUT /api/users/profile/update
  */
 exports.updateMyProfile = async (req, res) => {
@@ -470,7 +470,7 @@ exports.updateMyProfile = async (req, res) => {
         res.json({ success: true, message: 'Cập nhật thông tin thành công', user });
 
     } catch (error) {
-        console.error('❌ Error in updateMyProfile:', error);
+        console.error('Error in updateMyProfile:', error);
         res.status(500).json({ success: false, message: 'Lỗi server khi lưu thông tin' });
     }
 };
@@ -490,7 +490,39 @@ exports.getMyOrdersPage = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Lỗi khi lấy danh sách đơn hàng cá nhân:', error);
+        console.error('Lỗi khi lấy danh sách đơn hàng cá nhân:', error);
         res.status(500).send('Lỗi máy chủ khi tải đơn hàng!');
+    }
+};
+
+exports.cancelMyOrder = async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ success: false, message: 'Vui lòng đăng nhập' });
+        }
+
+        const orderId = req.params.id;
+
+        // 1. Tìm đơn hàng. Phải đảm bảo đơn hàng này thuộc về đúng User đang đăng nhập
+        const order = await Order.findOne({ _id: orderId, userId: req.session.user._id });
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
+        }
+
+        // 2. Kiểm tra điều kiện: Chỉ cho phép hủy nếu đơn hàng đang ở trạng thái 'pending'
+        if (order.status !== 'pending') {
+            return res.status(400).json({ success: false, message: 'Không thể hủy đơn hàng đã được xác nhận hoặc đang giao.' });
+        }
+
+        // 3. Cập nhật trạng thái thành 'cancelled'
+        order.status = 'cancelled';
+        await order.save();
+
+        res.json({ success: true, message: 'Đã hủy đơn hàng thành công' });
+
+    } catch (error) {
+        console.error('Lỗi khi hủy đơn hàng:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi hủy đơn' });
     }
 };

@@ -41,11 +41,11 @@ async function seed() {
     await Product.deleteMany({});
     await Product.insertMany(products);
 
-    console.log(`✅ Seed ${products.length} sản phẩm vào MongoDB thành công.`);
+    console.log(`Seed ${products.length} sản phẩm vào MongoDB thành công.`);
     await mongoose.connection.close();
 }
 
 seed().catch(err => {
-    console.error('❌ Seed lỗi:', err);
+    console.error('Seed lỗi:', err);
     process.exit(1);
 });

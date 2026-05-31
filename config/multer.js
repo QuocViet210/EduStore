@@ -2,12 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-/**
- * Cấu hình Multer để upload ảnh sản phẩm
- * ✅ Lưu vào thư mục: public/uploads/products/
- * ✅ Chỉ cho phép JPG, PNG, GIF
- * ✅ Giới hạn kích thước: 5MB
- */
+
 
 // Tạo thư mục uploads nếu chưa tồn tại
 const uploadDir = path.join(__dirname, '../public/uploads/products');

@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const { validateRegister, validateLogin, validateUpdateUser, validateChangePassword } = require('../middleware/validation');
 const { auth, adminAuth } = require('../middleware/auth');
 
-// 🔒 AUTHENTICATION ROUTES (Công khai)
+// AUTHENTICATION ROUTES (Công khai)
 /**
  * Đăng ký tài khoản mới
  * POST /api/auth/register
@@ -24,7 +24,7 @@ router.post('/auth/login', validateLogin, userController.login);
  */
 router.post('/auth/logout', auth, userController.logout);
 
-// 👤 USER ROUTES (Cần xác thực)
+// USER ROUTES (Cần xác thực)
 /**
  * Lấy thông tin cá nhân của người dùng
  * GET /api/users/profile/me
@@ -37,13 +37,15 @@ router.get('/profile/me', auth, userController.getCurrentUser);
  */
 router.put('/profile/update', auth, userController.updateMyProfile);
 router.get('/profile/my-orders', auth, userController.getMyOrdersPage);
+
+router.post('/profile/my-orders/:id/cancel', auth, userController.cancelMyOrder);
 /**
  * Đổi mật khẩu
  * PUT /api/users/profile/change-password
  */
 router.put('/profile/change-password', auth, validateChangePassword, userController.changePassword);
 
-// 👥 ADMIN USER MANAGEMENT ROUTES (Chỉ Admin)
+// ADMIN USER MANAGEMENT ROUTES (Chỉ Admin)
 /**
  * Lấy danh sách tất cả người dùng
  * GET /api/users

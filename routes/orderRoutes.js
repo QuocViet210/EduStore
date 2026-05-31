@@ -4,7 +4,7 @@ const orderController = require('../controllers/orderController');
 const { validateCreateOrder, validateUpdateOrderStatus } = require('../middleware/validation');
 const { auth, adminAuth } = require('../middleware/auth');
 
-// 🛒 USER ORDER ROUTES (Cần xác thực)
+// USER ORDER ROUTES (Cần xác thực)
 /**
  * Tạo đơn hàng mới
  * POST /api/orders
@@ -29,7 +29,7 @@ router.get('/:id', auth, orderController.getOrderDetail);
  */
 router.delete('/:id', auth, orderController.cancelOrder);
 
-// 📊 ADMIN ORDER MANAGEMENT ROUTES (Chỉ Admin)
+// ADMIN ORDER MANAGEMENT ROUTES (Chỉ Admin)
 /**
  * Lấy tất cả đơn hàng
  * GET /api/orders (với query params: status, search)

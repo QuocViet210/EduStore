@@ -54,15 +54,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('✅ Đăng nhập thành công!');
+                    alert('Đăng nhập thành công!');
                     window.location.href = '/';
                 } else {
                     const errorMsg = data.errors?.map(e => e.message).join('\n') || data.message;
-                    alert('❌ ' + errorMsg);
+                    alert('' + errorMsg);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('❌ Lỗi Server!');
+                alert('Lỗi Server!');
             }
         });
     </script>

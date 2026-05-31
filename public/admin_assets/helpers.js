@@ -544,7 +544,6 @@ const Helpers = {
     this.update()
   },
 
-  // *******************************************************************************
   // * Getters
 
   getLayoutMenu() {
@@ -566,8 +565,6 @@ const Helpers = {
   getLayoutFooter() {
     return document.querySelector('.content-footer')
   },
-
-  // *******************************************************************************
   // * Update
 
   update() {
@@ -592,7 +589,6 @@ const Helpers = {
     }
   },
 
-  // *******************************************************************************
   // * Tests
 
   isRtl() {
@@ -641,7 +637,6 @@ const Helpers = {
     return document.documentElement.classList.contains('light-style')
   },
 
-  // *******************************************************************************
   // * Events
 
   on(event = requiredParam('event'), callback = requiredParam('callback')) {
@@ -663,7 +658,6 @@ const Helpers = {
       .forEach(listener => this._listeners.splice(this._listeners.indexOf(listener), 1))
   },
 
-  // *******************************************************************************
   // * Life cycle
 
   init() {

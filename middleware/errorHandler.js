@@ -4,7 +4,7 @@
  */
 const errorHandler = (err, req, res, next) => {
     // Log lỗi ra console (dùng cho development)
-    console.error('🔴 Error:', {
+    console.error('Error:', {
         message: err.message,
         status: err.status || 500,
         path: req.path,

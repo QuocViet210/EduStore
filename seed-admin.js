@@ -23,7 +23,7 @@ async function seedAdmin() {
 
     await admin.save();
 
-    console.log('✅ Admin user created:');
+    console.log('Admin user created:');
     console.log('   Username: admin');
     console.log('   Email: admin@edustore.com');
     console.log('   Password: 123456');
@@ -32,6 +32,6 @@ async function seedAdmin() {
 }
 
 seedAdmin().catch(err => {
-    console.error('❌ Seed lỗi:', err);
+    console.error('Seed lỗi:', err);
     process.exit(1);
 });
